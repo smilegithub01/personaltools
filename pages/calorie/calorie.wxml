@@ -1,5 +1,15 @@
 <!--pages/calorie/calorie.wxml-->
 <view class="container">
+  <!-- 运动激励 Banner -->
+  <view class="fitness-banner">
+    <image class="fitness-banner-img" src="/images/fitness-banner.png" mode="aspectFill"></image>
+    <view class="fitness-banner-shade"></view>
+    <view class="fitness-banner-copy">
+      <view class="fitness-banner-title">今天也要向目标前进一步</view>
+      <view class="fitness-banner-sub">记录每一餐 · 看见每一次改变</view>
+    </view>
+  </view>
+
   <!-- 未设置资料 -->
   <view class="card guide" wx:if="{{!hasProfile}}">
     <view class="guide-emoji">🔥</view>

@@ -58,5 +58,12 @@ Page({
   goAdd(e) {
     const tab = e.currentTarget.dataset.tab || 'food'
     wx.navigateTo({ url: `/pages/calorie/add?tab=${tab}` })
+  },
+
+  onShareAppMessage() {
+    return {
+      title: '卡路里计划 · 记录每一次改变',
+      path: '/pages/calorie/calorie'
+    }
   }
 })

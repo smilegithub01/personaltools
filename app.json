@@ -1,11 +1,5 @@
 {
   "pages": [
-    "pages/index/index",
-    "pages/calculator/calculator",
-    "pages/notes/notes",
-    "pages/note-edit/note-edit",
-    "pages/converter/converter",
-    "pages/qrcode/qrcode",
     "pages/calorie/calorie",
     "pages/calorie/profile",
     "pages/calorie/add",
@@ -13,10 +7,10 @@
   ],
   "window": {
     "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#ffffff",
-    "navigationBarTitleText": "Personal Tools",
-    "navigationBarTextStyle": "black",
-    "backgroundColor": "#f5f5f5"
+    "navigationBarBackgroundColor": "#18352d",
+    "navigationBarTitleText": "卡路里计划",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f6f7f5"
   },
   "style": "v2",
   "sitemapLocation": "sitemap.json",
