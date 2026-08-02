@@ -17,13 +17,19 @@ Page({
   },
 
   onToolTap(e) {
-    const { id, name } = e.currentTarget.dataset
-    wx.showToast({
-      title: `${name} 开发中`,
-      icon: 'none',
-      duration: 1500
-    })
-    console.log('点击工具:', id)
+    const { id } = e.currentTarget.dataset
+    const routes = {
+      calculator: '/pages/calculator/calculator',
+      notes: '/pages/notes/notes',
+      converter: '/pages/converter/converter',
+      qrcode: '/pages/qrcode/qrcode'
+    }
+    const url = routes[id]
+    if (url) {
+      wx.navigateTo({ url })
+    } else {
+      wx.showToast({ title: '暂未实现', icon: 'none' })
+    }
   },
 
   onShareAppMessage() {

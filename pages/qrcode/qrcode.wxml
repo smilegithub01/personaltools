@@ -1,0 +1,29 @@
+<!--pages/qrcode/qrcode.wxml-->
+<view class="container">
+  <view class="card">
+    <textarea
+      class="input"
+      placeholder="输入文字或网址，如 https://github.com"
+      value="{{text}}"
+      maxlength="500"
+      auto-height
+      bindinput="onInput"
+    />
+    <view class="btn-row">
+      <view class="btn btn-gen" bindtap="generate">生成二维码</view>
+      <view class="btn btn-scan" bindtap="scan">扫码</view>
+    </view>
+    <view wx:if="{{scanned}}" class="scan-result">扫码结果：{{scanned}}</view>
+  </view>
+
+  <view class="card qr-box">
+    <view wx:if="{{!showResult}}" class="qr-placeholder">生成的二维码会显示在这里</view>
+    <canvas
+      wx:else
+      canvas-id="qrcode"
+      class="qr-canvas"
+      style="width:220px;height:220px;"
+    ></canvas>
+    <view wx:if="{{showResult}}" class="btn btn-save" bindtap="save">保存到相册</view>
+  </view>
+</view>

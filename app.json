@@ -1,6 +1,11 @@
 {
   "pages": [
-    "pages/index/index"
+    "pages/index/index",
+    "pages/calculator/calculator",
+    "pages/notes/notes",
+    "pages/note-edit/note-edit",
+    "pages/converter/converter",
+    "pages/qrcode/qrcode"
   ],
   "window": {
     "backgroundTextStyle": "light",

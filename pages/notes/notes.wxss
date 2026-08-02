@@ -1,0 +1,78 @@
+/* pages/notes/notes.wxss */
+.note-item {
+  padding: 28rpx 32rpx;
+}
+
+.note-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 12rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.note-content {
+  font-size: 26rpx;
+  color: #888;
+  line-height: 1.5;
+  max-height: 78rpx;
+  overflow: hidden;
+  margin-bottom: 16rpx;
+}
+
+.note-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.note-time {
+  font-size: 22rpx;
+  color: #bbb;
+}
+
+.note-del {
+  font-size: 24rpx;
+  color: #e54d42;
+  padding: 4rpx 12rpx;
+}
+
+.note-del:active {
+  opacity: 0.6;
+}
+
+.empty {
+  text-align: center;
+  padding: 80rpx 32rpx;
+}
+
+.empty-emoji {
+  font-size: 80rpx;
+  margin-bottom: 24rpx;
+}
+
+.empty-text {
+  font-size: 26rpx;
+  color: #999;
+}
+
+.fab {
+  position: fixed;
+  right: 40rpx;
+  bottom: 60rpx;
+  width: 100rpx;
+  height: 100rpx;
+  line-height: 100rpx;
+  text-align: center;
+  font-size: 60rpx;
+  color: #fff;
+  background: #07c160;
+  border-radius: 50%;
+  box-shadow: 0 8rpx 24rpx rgba(7, 193, 96, 0.4);
+}
+
+.fab:active {
+  background: #06ad56;
+}

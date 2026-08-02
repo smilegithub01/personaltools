@@ -1,0 +1,33 @@
+<!--pages/calculator/calculator.wxml-->
+<view class="container calc">
+  <view class="display card">
+    <view class="expr">{{expression || ''}}</view>
+    <view class="result">{{display}}</view>
+  </view>
+
+  <view class="keys">
+    <view class="key key-fn" bindtap="onClear">AC</view>
+    <view class="key key-fn" bindtap="onDelete">DEL</view>
+    <view class="key key-fn" bindtap="onPercent">%</view>
+    <view class="key key-op" bindtap="onOperator" data-op="/">÷</view>
+
+    <view class="key" bindtap="onDigit" data-d="7">7</view>
+    <view class="key" bindtap="onDigit" data-d="8">8</view>
+    <view class="key" bindtap="onDigit" data-d="9">9</view>
+    <view class="key key-op" bindtap="onOperator" data-op="*">×</view>
+
+    <view class="key" bindtap="onDigit" data-d="4">4</view>
+    <view class="key" bindtap="onDigit" data-d="5">5</view>
+    <view class="key" bindtap="onDigit" data-d="6">6</view>
+    <view class="key key-op" bindtap="onOperator" data-op="-">−</view>
+
+    <view class="key" bindtap="onDigit" data-d="1">1</view>
+    <view class="key" bindtap="onDigit" data-d="2">2</view>
+    <view class="key" bindtap="onDigit" data-d="3">3</view>
+    <view class="key key-op" bindtap="onOperator" data-op="+">+</view>
+
+    <view class="key key-zero" bindtap="onDigit" data-d="0">0</view>
+    <view class="key" bindtap="onDot">.</view>
+    <view class="key key-eq" bindtap="onEqual">=</view>
+  </view>
+</view>
