@@ -8,12 +8,7 @@ Page({
       { id: 'notes', name: '备忘录', desc: '随手记事', icon: '📝' },
       { id: 'converter', name: '单位换算', desc: '长度/重量/温度', icon: '📏' },
       { id: 'qrcode', name: '二维码', desc: '生成与扫描', icon: '📱' }
-    ],
-    systemInfo: null
-  },
-
-  onLoad() {
-    this.setData({ systemInfo: app.globalData.systemInfo })
+    ]
   },
 
   onToolTap(e) {
