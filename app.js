@@ -1,20 +1,13 @@
 // app.js
 App({
   onLaunch() {
-    // 展示本地存储能力
-    const logs = wx.getStorageSync('logs') || []
-    logs.unshift(Date.now())
-    wx.setStorageSync('logs', logs)
-
-    // 获取系统信息：使用新版拆分 API，避免使用已废弃的 getSystemInfoSync
-    // （后者在测试号 touristappid 下会触发 webapi_getwxaasyncsecinfo:fail invalid scope）
+    // 展示本地存储能力（测试号 touristappid 下个别 jsapi 可能受限，做容错避免启动崩溃）
     try {
-      this.globalData.systemInfo = {
-        ...wx.getWindowInfo(),
-        ...wx.getDeviceInfo()
-      }
+      const logs = wx.getStorageSync('logs') || []
+      logs.unshift(Date.now())
+      wx.setStorageSync('logs', logs)
     } catch (e) {
-      this.globalData.systemInfo = null
+      // ignore
     }
   },
 
