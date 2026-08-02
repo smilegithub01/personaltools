@@ -1,0 +1,41 @@
+<!--pages/calorie/weight.wxml-->
+<view class="container">
+  <view class="card today">
+    <view class="today-label">今日体重（{{today}}）</view>
+    <view class="today-row">
+      <input class="today-input" type="digit" value="{{weightInput}}" placeholder="记录今天的体重" bindinput="onInput" />
+      <text class="today-unit">kg</text>
+      <button class="today-btn" bindtap="onSave">记录</button>
+    </view>
+  </view>
+
+  <view class="card overview">
+    <view class="ov-grid">
+      <view class="ov-item"><text class="ov-num">{{ov.currentWeight}}</text><text class="ov-label">当前 kg</text></view>
+      <view class="ov-item"><text class="ov-num">{{ov.targetWeight}}</text><text class="ov-label">目标 kg</text></view>
+      <view class="ov-item hl"><text class="ov-num">-{{ov.lost}}</text><text class="ov-label">已减 kg</text></view>
+      <view class="ov-item"><text class="ov-num">{{ov.remain}}</text><text class="ov-label">还需 kg</text></view>
+    </view>
+    <view class="bar">
+      <view class="bar-fill" style="width:{{ov.progressPercent}}%"></view>
+    </view>
+    <view class="ov-foot" wx:if="{{ov.daysToGoal>0}}">按计划进度，预计还需约 {{ov.daysToGoal}} 天达成目标</view>
+    <view class="ov-foot" wx:else>已达成目标，太棒了！</view>
+  </view>
+
+  <view class="card trend">
+    <view class="sec-title">体重趋势</view>
+    <canvas type="2d" id="trend" class="trend-canvas"></canvas>
+    <view class="trend-hint" wx:if="{{points<2}}">记录至少 2 天体重后，这里会显示趋势曲线</view>
+  </view>
+
+  <view class="card history">
+    <view class="sec-title">历史记录</view>
+    <view class="hi-row" wx:for="{{list}}" wx:key="date">
+      <text class="hi-date">{{item.date}}</text>
+      <text class="hi-weight">{{item.weight}} kg</text>
+      <text class="hi-del" data-date="{{item.date}}" bindtap="onDelete">删除</text>
+    </view>
+    <view class="empty" wx:if="{{list.length===0}}">还没有记录</view>
+  </view>
+</view>

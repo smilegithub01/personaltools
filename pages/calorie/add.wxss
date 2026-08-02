@@ -1,0 +1,146 @@
+/* pages/calorie/add.wxss */
+.container {
+  padding: 24rpx;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+.tabs {
+  display: flex;
+  gap: 16rpx;
+  margin-bottom: 20rpx;
+}
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 20rpx 0;
+  background: #fff;
+  border-radius: 16rpx;
+  color: #666;
+  font-size: 28rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+}
+.tab.on {
+  background: #ff7043;
+  color: #fff;
+}
+.search {
+  padding: 8rpx 20rpx;
+  margin-bottom: 20rpx;
+}
+.search-input {
+  height: 64rpx;
+  font-size: 28rpx;
+}
+.card {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+}
+.sel-name {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #222;
+}
+.sel-sub {
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 6rpx;
+}
+.meal {
+  display: flex;
+  gap: 14rpx;
+  margin: 20rpx 0;
+}
+.meal-item {
+  flex: 1;
+  text-align: center;
+  padding: 12rpx 0;
+  background: #f2f2f2;
+  border-radius: 24rpx;
+  font-size: 24rpx;
+  color: #666;
+}
+.meal-item.on {
+  background: #fff0ea;
+  color: #ff7043;
+}
+.grams-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-top: 8rpx;
+}
+.grams {
+  flex: 1;
+  background: #f7f7f7;
+  border-radius: 12rpx;
+  padding: 14rpx 18rpx;
+  font-size: 28rpx;
+}
+.grams-unit {
+  color: #999;
+  font-size: 26rpx;
+}
+.quick {
+  display: flex;
+  gap: 10rpx;
+}
+.q {
+  padding: 10rpx 18rpx;
+  background: #f2f2f2;
+  border-radius: 20rpx;
+  font-size: 24rpx;
+  color: #666;
+}
+.preview {
+  text-align: center;
+  font-size: 28rpx;
+  color: #444;
+  margin: 24rpx 0;
+}
+.preview .big {
+  font-size: 44rpx;
+  font-weight: 700;
+  color: #ff7043;
+}
+.ok-btn {
+  background: #ff7043;
+  color: #fff;
+  border-radius: 44rpx;
+  font-size: 30rpx;
+}
+.list {
+  height: calc(100vh - 420rpx);
+}
+.food-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22rpx 24rpx;
+  margin-bottom: 14rpx;
+}
+.fi-main {
+  display: flex;
+  flex-direction: column;
+}
+.fi-name {
+  font-size: 28rpx;
+  color: #222;
+}
+.fi-cat {
+  font-size: 22rpx;
+  color: #aaa;
+  margin-top: 4rpx;
+}
+.fi-kcal {
+  font-size: 24rpx;
+  color: #ff7043;
+}
+.empty {
+  text-align: center;
+  color: #bbb;
+  font-size: 26rpx;
+  padding: 60rpx 0;
+}

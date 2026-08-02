@@ -5,7 +5,11 @@
     "pages/notes/notes",
     "pages/note-edit/note-edit",
     "pages/converter/converter",
-    "pages/qrcode/qrcode"
+    "pages/qrcode/qrcode",
+    "pages/calorie/calorie",
+    "pages/calorie/profile",
+    "pages/calorie/add",
+    "pages/calorie/weight"
   ],
   "window": {
     "backgroundTextStyle": "light",

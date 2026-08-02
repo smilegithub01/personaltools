@@ -1,0 +1,70 @@
+<!--pages/calorie/add.wxml-->
+<view class="container">
+  <view class="tabs">
+    <view class="tab {{tab==='food'?'on':''}}" data-tab="food" bindtap="onTab">🍚 记饮食</view>
+    <view class="tab {{tab==='exercise'?'on':''}}" data-tab="exercise" bindtap="onTab">🏃 记运动</view>
+  </view>
+
+  <!-- 饮食 -->
+  <block wx:if="{{tab==='food'}}">
+    <view class="search card">
+      <input class="search-input" placeholder="搜索食物，如 米饭 / 鸡胸肉" value="{{kw}}" bindinput="onKw" />
+    </view>
+    <view class="card sel" wx:if="{{selFood}}">
+      <view class="sel-name">{{selFood.name}}</view>
+      <view class="sel-sub">{{selFood.kcal}} kcal / 100g</view>
+      <view class="meal">
+        <view class="meal-item {{meal===m?'on':''}}" wx:for="{{meals}}" wx:key="*this" data-m="{{item}}" bindtap="onMeal">{{item}}</view>
+      </view>
+      <view class="grams-row">
+        <input class="grams" type="digit" placeholder="克数" value="{{grams}}" bindinput="onGrams" />
+        <text class="grams-unit">g</text>
+        <view class="quick">
+          <text class="q" data-g="50" bindtap="onQuick">50</text>
+          <text class="q" data-g="100" bindtap="onQuick">100</text>
+          <text class="q" data-g="150" bindtap="onQuick">150</text>
+          <text class="q" data-g="200" bindtap="onQuick">200</text>
+        </view>
+      </view>
+      <view class="preview">≈ <text class="big">{{foodKcal}}</text> kcal</view>
+      <button class="ok-btn" bindtap="onAddFood">添加到今日</button>
+    </view>
+    <scroll-view scroll-y class="list">
+      <view class="food-item card" wx:for="{{foods}}" wx:key="name" data-name="{{item.name}}" bindtap="onPickFood">
+        <view class="fi-main">
+          <text class="fi-name">{{item.name}}</text>
+          <text class="fi-cat">{{item.cat}}</text>
+        </view>
+        <text class="fi-kcal">{{item.kcal}}/100g</text>
+      </view>
+      <view class="empty" wx:if="{{foods.length===0}}">没有找到「{{kw}}」</view>
+    </scroll-view>
+  </block>
+
+  <!-- 运动 -->
+  <block wx:if="{{tab==='exercise'}}">
+    <view class="search card">
+      <input class="search-input" placeholder="搜索运动，如 跑步 / 游泳" value="{{ekw}}" bindinput="onEkw" />
+    </view>
+    <view class="card sel" wx:if="{{selEx}}">
+      <view class="sel-name">{{selEx.name}}</view>
+      <view class="sel-sub">MET {{selEx.met}} · 体重 {{weight}}kg</view>
+      <view class="grams-row">
+        <input class="grams" type="digit" placeholder="时长(分钟)" value="{{minutes}}" bindinput="onMinutes" />
+        <text class="grams-unit">分钟</text>
+      </view>
+      <view class="preview">≈ 消耗 <text class="big">{{exKcal}}</text> kcal</view>
+      <button class="ok-btn" bindtap="onAddEx">添加到今日</button>
+    </view>
+    <scroll-view scroll-y class="list">
+      <view class="food-item card" wx:for="{{exercises}}" wx:key="name" data-name="{{item.name}}" bindtap="onPickEx">
+        <view class="fi-main">
+          <text class="fi-name">{{item.name}}</text>
+          <text class="fi-cat">MET {{item.met}}</text>
+        </view>
+        <text class="fi-kcal">点选</text>
+      </view>
+      <view class="empty" wx:if="{{exercises.length===0}}">没有找到「{{ekw}}」</view>
+    </scroll-view>
+  </block>
+</view>

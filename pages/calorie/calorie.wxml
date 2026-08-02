@@ -1,0 +1,71 @@
+<!--pages/calorie/calorie.wxml-->
+<view class="container">
+  <!-- 未设置资料 -->
+  <view class="card guide" wx:if="{{!hasProfile}}">
+    <view class="guide-emoji">🔥</view>
+    <view class="guide-title">开启你的减肥计划</view>
+    <view class="guide-sub">先完善身体资料与目标，我们帮你算出专属每日热量额度</view>
+    <button class="guide-btn" bindtap="goProfile">开始设置</button>
+  </view>
+
+  <block wx:else>
+    <!-- 计划概览 -->
+    <view class="card plan">
+      <view class="plan-left">
+        <view class="plan-num">-{{ov.lost}}</view>
+        <view class="plan-label">已减 kg</view>
+        <view class="plan-sub">目标 {{ov.targetWeight}} kg · 还需 {{ov.remain}} kg</view>
+      </view>
+      <view class="plan-right">
+        <view class="plan-days" wx:if="{{ov.daysToGoal>0}}">{{ov.daysToGoal}}<text class="plan-days-unit">天</text></view>
+        <view class="plan-days done" wx:else>达成</view>
+        <view class="plan-days-label">预计达成</view>
+      </view>
+    </view>
+
+    <!-- 今日环形 -->
+    <view class="card today">
+      <view class="ring" style="background: conic-gradient({{ringColor}} {{ratioPercent}}%, #f0f0f0 0);">
+        <view class="ring-inner">
+          <view class="ring-num {{remaining<0?'over':''}}">{{remaining}}</view>
+          <view class="ring-label">{{remaining<0?'已超出 kcal':'今日剩余 kcal'}}</view>
+        </view>
+      </view>
+      <view class="today-stats">
+        <view class="ts"><text class="ts-num">{{target}}</text><text class="ts-label">目标摄入</text></view>
+        <view class="ts"><text class="ts-num">{{foodKcal}}</text><text class="ts-label">已摄入</text></view>
+        <view class="ts"><text class="ts-num">{{exerciseKcal}}</text><text class="ts-label">运动消耗</text></view>
+      </view>
+    </view>
+
+    <!-- 快捷操作 -->
+    <view class="actions">
+      <view class="action" data-tab="food" bindtap="goAdd"><text class="a-ico">🍚</text><text class="a-txt">记饮食</text></view>
+      <view class="action" data-tab="exercise" bindtap="goAdd"><text class="a-ico">🏃</text><text class="a-txt">记运动</text></view>
+      <view class="action" bindtap="goWeight"><text class="a-ico">⚖️</text><text class="a-txt">记体重</text></view>
+      <view class="action" bindtap="goProfile"><text class="a-ico">⚙️</text><text class="a-txt">我的资料</text></view>
+    </view>
+
+    <!-- 今日明细 -->
+    <view class="card detail">
+      <view class="sec-title">今日明细</view>
+      <view class="empty" wx:if="{{foods.length===0 && exercises.length===0}}">今天还没有记录，点上方按钮开始吧</view>
+
+      <view class="dt-group" wx:if="{{foods.length>0}}">
+        <view class="dt-head">🍚 饮食（{{foodKcal}} kcal）</view>
+        <view class="dt-row" wx:for="{{foods}}" wx:key="idx" wx:for-index="idx">
+          <text class="dt-name">{{item.meal}} · {{item.name}}</text>
+          <text class="dt-kcal">{{item.kcal}} kcal</text>
+        </view>
+      </view>
+
+      <view class="dt-group" wx:if="{{exercises.length>0}}">
+        <view class="dt-head">🏃 运动（{{exerciseKcal}} kcal）</view>
+        <view class="dt-row" wx:for="{{exercises}}" wx:key="idx" wx:for-index="idx">
+          <text class="dt-name">{{item.name}} · {{item.duration}}分钟</text>
+          <text class="dt-kcal">+{{item.kcal}} kcal</text>
+        </view>
+      </view>
+    </view>
+  </block>
+</view>

@@ -1,0 +1,76 @@
+<!--pages/calorie/profile.wxml-->
+<view class="container">
+  <view class="card section">
+    <view class="sec-title">身体资料</view>
+
+    <view class="row">
+      <text class="label">性别</text>
+      <view class="seg">
+        <view class="seg-item {{gender==='male'?'on':''}}" data-g="male" bindtap="onGender">男</view>
+        <view class="seg-item {{gender==='female'?'on':''}}" data-g="female" bindtap="onGender">女</view>
+      </view>
+    </view>
+
+    <view class="row">
+      <text class="label">年龄</text>
+      <input class="input" type="number" placeholder="岁" value="{{age}}" bindinput="onAge" />
+      <text class="unit">岁</text>
+    </view>
+
+    <view class="row">
+      <text class="label">身高</text>
+      <input class="input" type="digit" placeholder="cm" value="{{height}}" bindinput="onHeight" />
+      <text class="unit">cm</text>
+    </view>
+
+    <view class="row">
+      <text class="label">当前体重</text>
+      <input class="input" type="digit" placeholder="kg" value="{{weight}}" bindinput="onWeight" />
+      <text class="unit">kg</text>
+    </view>
+
+    <view class="row">
+      <text class="label">活动水平</text>
+      <picker class="picker" range="{{activityLabels}}" value="{{activityIndex}}" bindchange="onActivity">
+        <view class="picker-text">{{activityLabels[activityIndex]}}</view>
+      </picker>
+    </view>
+  </view>
+
+  <view class="card section">
+    <view class="sec-title">减肥目标</view>
+
+    <view class="row">
+      <text class="label">目标体重</text>
+      <input class="input" type="digit" placeholder="kg" value="{{targetWeight}}" bindinput="onTarget" />
+      <text class="unit">kg</text>
+    </view>
+
+    <view class="row col">
+      <view class="rate-head">
+        <text class="label">每周减重速度</text>
+        <text class="rate-val">{{weeklyRate}} kg/周</text>
+      </view>
+      <slider min="0.25" max="1" step="0.25" value="{{weeklyRate}}" activeColor="#ff7043" block-size="20" bindchange="onRate" bindchanging="onRate" />
+      <text class="hint">健康建议：0.5 kg/周 左右更可持续（约 3850 kcal/周 缺口）</text>
+    </view>
+  </view>
+
+  <view class="card result" wx:if="{{bmr}}">
+    <view class="res-item">
+      <text class="res-num">{{bmr}}</text>
+      <text class="res-label">基础代谢 BMR</text>
+    </view>
+    <view class="res-item">
+      <text class="res-num">{{tdee}}</text>
+      <text class="res-label">每日总消耗 TDEE</text>
+    </view>
+    <view class="res-item hl">
+      <text class="res-num">{{target}}</text>
+      <text class="res-label">每日目标摄入</text>
+    </view>
+    <view class="res-warn" wx:if="{{warn}}">{{warn}}</view>
+  </view>
+
+  <button class="save-btn" bindtap="onSave">保存并开始</button>
+</view>
