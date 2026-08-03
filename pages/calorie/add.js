@@ -26,8 +26,8 @@ Page({
     const p = cal.getProfile()
     this.setData({
       weight: p ? p.weight : 60,
-      meal: ai.predictMeal(), // 智能预选餐次
-      frequent: ai.frequentFoods(6) // 常吃快捷区
+      meal: ai.predictMeal(),
+      frequent: ai.frequentFoods(6)
     })
     if (options && options.tab === 'exercise') {
       this.setData({ tab: 'exercise' })

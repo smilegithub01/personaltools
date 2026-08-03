@@ -15,7 +15,7 @@ App({
       try {
         wx.cloud.init({
           traceUser: true,
-          env: undefined // 使用默认环境；如多环境请在 project.config.json 指定 cloudbaseEnv
+          env: undefined
         })
       } catch (e) {
         console.warn('云环境初始化失败（可能未开通云开发）：', e)

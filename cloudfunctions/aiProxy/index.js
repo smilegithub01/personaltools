@@ -145,7 +145,7 @@ exports.main = async (event, context) => {
         messages,
         temperature: 0.7,
         max_tokens: 400,
-        stream: true // 优先流式，降低首字延迟
+        stream: true
       })
     });
 

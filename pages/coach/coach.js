@@ -50,12 +50,13 @@ function calcStreak(getDayLog, dateKey) {
 
 Page({
   data: {
-    messages: [],      // { role: 'user'|'assistant', content, typing }
+    messages: [],
+    input: '',
     input: '',
     loading: false,
-    ready: false,      // 云环境是否初始化成功
-    quotaUsed: 0,      // 今日已用次数
-    quotaLimit: 30     // 每日上限
+    ready: false,
+    quotaUsed: 0,
+    quotaLimit: 30
   },
 
   onLoad() {

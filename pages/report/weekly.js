@@ -5,7 +5,7 @@ Page({
   data: {
     report: {},
     canvasReady: false,
-    savedTip: ''          // 保存结果提示
+    savedTip: ''
   },
 
   onLoad() {

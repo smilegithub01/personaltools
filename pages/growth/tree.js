@@ -4,8 +4,8 @@ const growth = require('../../utils/growth.js')
 Page({
   data: {
     tree: {},
-    animateGrow: false   // 控制生长动画触发
-    leaves: []           // 树上装饰（根据等级生成）
+    animateGrow: false,
+    leaves: []
   },
 
   onLoad() {
