@@ -1,76 +1,77 @@
 <!--pages/calorie/profile.wxml-->
 <view class="container">
-  <view class="card section">
+  <view class="card anim-in">
     <view class="sec-title">身体资料</view>
-
-    <view class="row">
-      <text class="label">性别</text>
-      <view class="seg">
-        <view class="seg-item {{gender==='male'?'on':''}}" data-g="male" bindtap="onGender">男</view>
-        <view class="seg-item {{gender==='female'?'on':''}}" data-g="female" bindtap="onGender">女</view>
+    <view class="form">
+      <view class="field">
+        <text class="field-label">性别</text>
+        <view class="seg">
+          <view class="seg-item {{gender==='male'?'on':''}}" data-g="male" bindtap="onGender">男</view>
+          <view class="seg-item {{gender==='female'?'on':''}}" data-g="female" bindtap="onGender">女</view>
+        </view>
       </view>
-    </view>
 
-    <view class="row">
-      <text class="label">年龄</text>
-      <input class="input" type="number" placeholder="岁" value="{{age}}" bindinput="onAge" />
-      <text class="unit">岁</text>
-    </view>
+      <view class="field">
+        <text class="field-label">年龄</text>
+        <input class="field-input" type="number" placeholder="请输入年龄" value="{{age}}" bindinput="onAge" />
+      </view>
 
-    <view class="row">
-      <text class="label">身高</text>
-      <input class="input" type="digit" placeholder="cm" value="{{height}}" bindinput="onHeight" />
-      <text class="unit">cm</text>
-    </view>
+      <view class="field">
+        <text class="field-label">身高</text>
+        <input class="field-input" type="digit" placeholder="请输入身高" value="{{height}}" bindinput="onHeight" />
+      </view>
 
-    <view class="row">
-      <text class="label">当前体重</text>
-      <input class="input" type="digit" placeholder="kg" value="{{weight}}" bindinput="onWeight" />
-      <text class="unit">kg</text>
-    </view>
+      <view class="field">
+        <text class="field-label">当前体重</text>
+        <input class="field-input" type="digit" placeholder="请输入当前体重" value="{{weight}}" bindinput="onWeight" />
+      </view>
 
-    <view class="row">
-      <text class="label">活动水平</text>
-      <picker class="picker" range="{{activityLabels}}" value="{{activityIndex}}" bindchange="onActivity">
-        <view class="picker-text">{{activityLabels[activityIndex]}}</view>
-      </picker>
+      <view class="field">
+        <text class="field-label">活动水平</text>
+        <picker range="{{activityLabels}}" value="{{activityIndex}}" bindchange="onActivity">
+          <view class="field-input">{{activityLabels[activityIndex]}}</view>
+        </picker>
+      </view>
     </view>
   </view>
 
-  <view class="card section">
+  <view class="card anim-in" style="animation-delay:0.06s">
     <view class="sec-title">减肥目标</view>
-
-    <view class="row">
-      <text class="label">目标体重</text>
-      <input class="input" type="digit" placeholder="kg" value="{{targetWeight}}" bindinput="onTarget" />
-      <text class="unit">kg</text>
-    </view>
-
-    <view class="row col">
-      <view class="rate-head">
-        <text class="label">每周减重速度</text>
-        <text class="rate-val">{{weeklyRate}} kg/周</text>
+    <view class="form">
+      <view class="field">
+        <text class="field-label">目标体重</text>
+        <input class="field-input" type="digit" placeholder="请输入目标体重" value="{{targetWeight}}" bindinput="onTarget" />
       </view>
-      <slider min="0.25" max="1" step="0.25" value="{{weeklyRate}}" activeColor="#ff7043" block-size="20" bindchange="onRate" bindchanging="onRate" />
-      <text class="hint">健康建议：0.5 kg/周 左右更可持续（约 3850 kcal/周 缺口）</text>
+
+      <view class="field">
+        <view class="rate-head" style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8rpx">
+          <text class="field-label" style="margin-bottom:0">每周减重速度</text>
+          <text style="font-size:28rpx;font-weight:600;color:#ff7e8a">{{weeklyRate}} kg/周</text>
+        </view>
+        <slider min="0.25" max="1" step="0.25" value="{{weeklyRate}}" activeColor="#ff7e8a" block-size="20" bindchange="onRate" bindchanging="onRate" />
+        <text class="text-weak" style="font-size:22rpx">健康建议：0.5 kg/周 左右更可持续（约 3850 kcal/周 缺口）</text>
+      </view>
     </view>
   </view>
 
-  <view class="card result" wx:if="{{bmr}}">
-    <view class="res-item">
-      <text class="res-num">{{bmr}}</text>
-      <text class="res-label">基础代谢 BMR</text>
+  <view class="result anim-in" style="animation-delay:0.12s" wx:if="{{bmr}}">
+    <view class="result-row">
+      <text class="result-key">基础代谢 BMR</text>
+      <text class="result-val">{{bmr}} <small>kcal</small></text>
     </view>
-    <view class="res-item">
-      <text class="res-num">{{tdee}}</text>
-      <text class="res-label">每日总消耗 TDEE</text>
+    <view class="result-row">
+      <text class="result-key">每日总消耗 TDEE</text>
+      <text class="result-val">{{tdee}} <small>kcal</small></text>
     </view>
-    <view class="res-item hl">
-      <text class="res-num">{{target}}</text>
-      <text class="res-label">每日目标摄入</text>
+    <view class="result-row">
+      <text class="result-key">每日目标摄入</text>
+      <text class="result-val">{{target}} <small>kcal</small></text>
     </view>
-    <view class="res-warn" wx:if="{{warn}}">{{warn}}</view>
+    <view class="result-bmi" wx:if="{{bmi}}">
+      当前 BMI <text class="bmi-tag bmi-{{bmi.cls}}">{{bmi.bmi}} · {{bmi.level}}</text>
+    </view>
+    <view class="empty-tip" style="color:#e0892b;padding:12rpx 0 0" wx:if="{{warn}}">{{warn}}</view>
   </view>
 
-  <button class="save-btn" bindtap="onSave">保存并开始</button>
+  <button class="btn-primary footer anim-in" style="animation-delay:0.16s" bindtap="onSave">{{isEdit ? '保存修改' : '保存并开始'}}</button>
 </view>

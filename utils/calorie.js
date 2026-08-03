@@ -194,24 +194,39 @@ function planOverview(profile) {
   const weightLog = getWeightLog()
   const keys = Object.keys(weightLog).sort()
   const startWeight = keys.length ? weightLog[keys[0]] : profile.weight
-  const currentWeight = profile.weight
+  // currentWeight 取最新一条体重记录，与 profile.weight 解耦，避免目标漂移
+  const currentWeight = keys.length ? weightLog[keys[keys.length - 1]] : profile.weight
   const targetWeight = profile.targetWeight
   const totalToLose = Math.max(0, startWeight - targetWeight)
-  const lost = Math.max(0, startWeight - currentWeight)
-  const remain = Math.max(0, currentWeight - targetWeight)
+  const lost = Math.max(0, round1(startWeight - currentWeight))
+  const remain = Math.max(0, round1(currentWeight - targetWeight))
   const weeklyRate = Number(profile.weeklyRate) || 0.5
-  const daysToGoal = weeklyRate > 0 ? Math.ceil((remain / weeklyRate) * 7) : 0
+  const daysToGoal = weeklyRate > 0 && remain > 0 ? Math.ceil((remain / weeklyRate) * 7) : 0
   const progress = totalToLose > 0 ? Math.min(1, lost / totalToLose) : 0
   return {
-    startWeight,
-    currentWeight,
-    targetWeight,
+    startWeight: round1(startWeight),
+    currentWeight: round1(currentWeight),
+    targetWeight: round1(targetWeight),
     totalToLose: round1(totalToLose),
-    lost: round1(lost),
-    remain: round1(remain),
+    lost,
+    remain,
     daysToGoal,
     progress
   }
+}
+
+// BMI 计算与中文分级（亚洲标准）
+function calcBMI(p) {
+  if (!p || !p.height || !p.weight) return null
+  const m = p.height / 100
+  const bmi = p.weight / (m * m)
+  let level = '正常'
+  let cls = 'normal'
+  if (bmi < 18.5) { level = '偏瘦'; cls = 'low' }
+  else if (bmi < 24) { level = '正常'; cls = 'normal' }
+  else if (bmi < 28) { level = '偏胖'; cls = 'high' }
+  else { level = '肥胖'; cls = 'obese' }
+  return { bmi: Math.round(bmi * 10) / 10, level, cls }
 }
 
 function round1(n) {
@@ -233,6 +248,7 @@ module.exports = {
   calcBMR,
   calcTDEE,
   calcTarget,
+  calcBMI,
   calcExerciseKcal,
   calcFoodKcal,
   calcDaySummary,

@@ -3,6 +3,7 @@ const cal = require('../../utils/calorie.js')
 
 Page({
   data: {
+    isEdit: false,
     gender: 'male',
     age: '',
     height: '',
@@ -14,6 +15,7 @@ Page({
     bmr: '',
     tdee: '',
     target: '',
+    bmi: null,
     warn: ''
   },
 
@@ -22,6 +24,7 @@ Page({
     if (p) {
       const idx = cal.ACTIVITY.findIndex((a) => a.key === p.activity)
       this.setData({
+        isEdit: true,
         gender: p.gender || 'male',
         age: p.age != null ? String(p.age) : '',
         height: p.height != null ? String(p.height) : '',
@@ -77,10 +80,12 @@ Page({
     const bmr = cal.calcBMR(profile)
     const tdee = cal.calcTDEE(profile)
     const t = cal.calcTarget(profile)
+    const bmi = cal.calcBMI(profile)
     this.setData({
       bmr,
       tdee,
       target: t.target,
+      bmi,
       warn: t.warn
     })
   },
@@ -107,6 +112,23 @@ Page({
       wx.showToast({ title: '请填写目标体重', icon: 'none' })
       return
     }
+    // 目标体重健康下限：BMI 18.5 对应体重，避免设定过低伤害身体
+    const minHealthy = Math.round((18.5 * Math.pow(height / 100, 2)) * 10) / 10
+    if (targetWeight < minHealthy) {
+      wx.showModal({
+        title: '目标体重偏低',
+        content: `按你的身高，健康体重建议不低于 ${minHealthy} kg。过低的目标可能影响代谢与健康，是否仍要保存？`,
+        confirmText: '坚持保存',
+        cancelText: '我再想想',
+        success: (r) => { if (r.confirm) this.doSave(age, height, weight, targetWeight) }
+      })
+      return
+    }
+    this.doSave(age, height, weight, targetWeight)
+  },
+
+  doSave(age, height, weight, targetWeight) {
+    const d = this.data
     const profile = {
       gender: d.gender,
       age,

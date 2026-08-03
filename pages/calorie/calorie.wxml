@@ -1,79 +1,144 @@
 <!--pages/calorie/calorie.wxml-->
 <view class="container">
-  <!-- 运动激励 Banner -->
-  <view class="fitness-banner">
-    <image class="fitness-banner-img" src="/images/fitness-banner.png" mode="aspectFill"></image>
-    <view class="fitness-banner-shade"></view>
+  <!-- 激励 Banner —— 图片全铺 + 文字叠加 -->
+  <view class="fitness-banner anim-in">
+    <image class="fitness-banner-bg" src="/images/fitness-banner.png" mode="aspectFill"></image>
+    <view class="fitness-banner-overlay"></view>
     <view class="fitness-banner-copy">
-      <view class="fitness-banner-title">今天也要向目标前进一步</view>
-      <view class="fitness-banner-sub">记录每一餐 · 看见每一次改变</view>
+      <view class="fitness-banner-title">{{bannerTitle}}</view>
+      <view class="fitness-banner-sub">{{bannerSub}}</view>
     </view>
   </view>
 
   <!-- 未设置资料 -->
-  <view class="card guide" wx:if="{{!hasProfile}}">
-    <view class="guide-emoji">🔥</view>
-    <view class="guide-title">开启你的减肥计划</view>
+    <view class="card guide anim-in" wx:if="{{!hasProfile}}">
+      <view class="guide-icon"><view class="icon icon-target p" style="width:72rpx;height:72rpx"></view></view>
+      <view class="guide-title">开启你的减脂计划</view>
     <view class="guide-sub">先完善身体资料与目标，我们帮你算出专属每日热量额度</view>
-    <button class="guide-btn" bindtap="goProfile">开始设置</button>
+    <button class="btn-primary guide-btn" bindtap="goProfile">开始设置</button>
   </view>
 
   <block wx:else>
     <!-- 计划概览 -->
-    <view class="card plan">
-      <view class="plan-left">
-        <view class="plan-num">-{{ov.lost}}</view>
-        <view class="plan-label">已减 kg</view>
-        <view class="plan-sub">目标 {{ov.targetWeight}} kg · 还需 {{ov.remain}} kg</view>
+    <view class="card anim-in" style="animation-delay:0.05s">
+      <view class="ov-top">
+        <view class="ov-top-item">
+          <text class="ov-top-val">{{ov.currentWeight}} <text class="ov-top-unit">kg</text></text>
+          <text class="ov-top-label">当前体重</text>
+        </view>
+        <view class="ov-top-div"></view>
+        <view class="ov-top-item" wx:if="{{bmi}}">
+          <text class="ov-top-val bmi-{{bmi.cls}}">{{bmi.bmi}}</text>
+          <text class="ov-top-label">BMI · {{bmi.level}}</text>
+        </view>
+        <view class="ov-top-item" wx:else>
+          <text class="ov-top-val">—</text>
+          <text class="ov-top-label">BMI</text>
+        </view>
+        <view class="ov-top-div"></view>
+        <view class="ov-top-item">
+          <text class="ov-top-val text-accent">{{compliance}}%</text>
+          <text class="ov-top-label">本周达标</text>
+        </view>
       </view>
-      <view class="plan-right">
-        <view class="plan-days" wx:if="{{ov.daysToGoal>0}}">{{ov.daysToGoal}}<text class="plan-days-unit">天</text></view>
-        <view class="plan-days done" wx:else>达成</view>
-        <view class="plan-days-label">预计达成</view>
+      <view class="metrics">
+        <view class="metric">
+          <view class="metric-val pos">-{{ov.lost}}</view>
+          <view class="metric-label">已减 kg</view>
+        </view>
+        <view class="metric">
+          <view class="metric-val">{{ov.targetWeight}}</view>
+          <view class="metric-label">目标 kg</view>
+        </view>
+        <view class="metric">
+          <view class="metric-val">{{ov.remain}}</view>
+          <view class="metric-label">还需 kg</view>
+        </view>
+        <view class="metric">
+          <view class="metric-val">{{ov.daysToGoal > 0 ? ov.daysToGoal : '达成'}}</view>
+          <view class="metric-label">预计天数</view>
+        </view>
       </view>
     </view>
 
     <!-- 今日环形 -->
-    <view class="card today">
-      <view class="ring" style="background: conic-gradient({{ringColor}} {{ratioPercent}}%, #f0f0f0 0);">
-        <view class="ring-inner">
-          <view class="ring-num {{remaining<0?'over':''}}">{{remaining}}</view>
-          <view class="ring-label">{{remaining<0?'已超出 kcal':'今日剩余 kcal'}}</view>
-        </view>
+    <view class="result-card anim-in" style="animation-delay:0.1s">
+      <view class="result-ring">
+        <svg width="240" height="240" viewBox="0 0 240 240">
+          <circle class="ring-bg" cx="120" cy="120" r="100" fill="none" stroke-width="20"></circle>
+          <circle class="ring-fg" cx="120" cy="120" r="100" fill="none" stroke-width="20"
+            stroke-dasharray="628.3" stroke-dashoffset="{{ringOffset}}"></circle>
+          <text class="ring-center" x="120" y="116">{{ratioPercent}}%</text>
+          <text class="ring-center-sub" x="120" y="144">{{remaining >= 0 ? '已使用' : '已超出'}} {{totalKcal}} kcal</text>
+        </svg>
       </view>
-      <view class="today-stats">
-        <view class="ts"><text class="ts-num">{{target}}</text><text class="ts-label">目标摄入</text></view>
-        <view class="ts"><text class="ts-num">{{foodKcal}}</text><text class="ts-label">已摄入</text></view>
-        <view class="ts"><text class="ts-num">{{exerciseKcal}}</text><text class="ts-label">运动消耗</text></view>
+      <view class="metrics">
+        <view class="metric">
+          <view class="metric-val">{{target}}</view>
+          <view class="metric-label">目标摄入</view>
+        </view>
+        <view class="metric">
+          <view class="metric-val">{{foodKcal}}</view>
+          <view class="metric-label">已摄入</view>
+        </view>
+        <view class="metric">
+          <view class="metric-val">{{exerciseKcal}}</view>
+          <view class="metric-label">运动消耗</view>
+        </view>
+        <view class="metric">
+          <view class="metric-val" style="color:{{remaining<0?'#e53935':'#2fa86a'}}">{{remaining}}</view>
+          <view class="metric-label">剩余 kcal</view>
+        </view>
       </view>
     </view>
 
     <!-- 快捷操作 -->
-    <view class="actions">
-      <view class="action" data-tab="food" bindtap="goAdd"><text class="a-ico">🍚</text><text class="a-txt">记饮食</text></view>
-      <view class="action" data-tab="exercise" bindtap="goAdd"><text class="a-ico">🏃</text><text class="a-txt">记运动</text></view>
-      <view class="action" bindtap="goWeight"><text class="a-ico">⚖️</text><text class="a-txt">记体重</text></view>
-      <view class="action" bindtap="goProfile"><text class="a-ico">⚙️</text><text class="a-txt">我的资料</text></view>
+    <view class="actions anim-in" style="animation-delay:0.15s">
+      <view class="action-btn tap" data-tab="food" bindtap="goAdd"><view class="icon icon-food p"></view>记饮食</view>
+      <view class="action-btn tap" data-tab="exercise" bindtap="goAdd"><view class="icon icon-ex p"></view>记运动</view>
+      <view class="action-btn ghost tap" bindtap="goWeight"><view class="icon icon-weight m"></view>记体重</view>
+      <view class="action-btn ghost tap" bindtap="goProfile"><view class="icon icon-gear m"></view>资料</view>
     </view>
 
     <!-- 今日明细 -->
-    <view class="card detail">
+    <view class="card detail anim-in" style="animation-delay:0.2s">
       <view class="sec-title">今日明细</view>
-      <view class="empty" wx:if="{{foods.length===0 && exercises.length===0}}">今天还没有记录，点上方按钮开始吧</view>
 
-      <view class="dt-group" wx:if="{{foods.length>0}}">
-        <view class="dt-head">🍚 饮食（{{foodKcal}} kcal）</view>
+      <!-- AI 饮食推荐 -->
+      <view class="reco" wx:if="{{recommends.length>0}}">
+        <view class="reco-head"><view class="icon icon-ai p"></view>还能吃这些（距目标 {{remaining}} kcal）</view>
+        <view class="reco-list">
+          <view class="reco-item" wx:for="{{recommends}}" wx:key="name" data-name="{{item.name}}" bindtap="goAddFood">
+            <view class="reco-main">
+              <text class="reco-name">{{item.name}}</text>
+              <text class="reco-cat">{{item.suggest}}</text>
+            </view>
+            <text class="reco-kcal">{{item.kcal}} kcal/100g</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="empty-tip" wx:if="{{foods.length===0 && exercises.length===0}}">今天还没有记录，点上方按钮开始吧</view>
+
+      <view wx:if="{{foods.length>0}}">
+        <view class="dt-head"><view class="icon icon-list m"></view>饮食（{{foodKcal}} kcal）</view>
         <view class="dt-row" wx:for="{{foods}}" wx:key="idx" wx:for-index="idx">
-          <text class="dt-name">{{item.meal}} · {{item.name}}</text>
+          <view>
+            <view class="dt-name">{{item.meal}} · {{item.name}}</view>
+            <view class="dt-sub">{{item.grams}} g</view>
+          </view>
           <text class="dt-kcal">{{item.kcal}} kcal</text>
         </view>
       </view>
 
-      <view class="dt-group" wx:if="{{exercises.length>0}}">
-        <view class="dt-head">🏃 运动（{{exerciseKcal}} kcal）</view>
+      <view wx:if="{{exercises.length>0}}" style="margin-top:12rpx">
+        <view class="dt-head"><view class="icon icon-list m"></view>运动（{{exerciseKcal}} kcal）</view>
         <view class="dt-row" wx:for="{{exercises}}" wx:key="idx" wx:for-index="idx">
-          <text class="dt-name">{{item.name}} · {{item.duration}}分钟</text>
-          <text class="dt-kcal">+{{item.kcal}} kcal</text>
+          <view>
+            <view class="dt-name">{{item.name}}</view>
+            <view class="dt-sub">{{item.duration}} 分钟</view>
+          </view>
+          <text class="dt-kcal" style="color:#2fa86a">+{{item.kcal}} kcal</text>
         </view>
       </view>
     </view>

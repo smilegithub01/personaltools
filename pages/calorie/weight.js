@@ -27,18 +27,57 @@ Page({
     }
     const wl = cal.getWeightLog()
     const keys = Object.keys(wl).sort()
-    const list = keys
-      .slice()
-      .reverse()
-      .map((date) => ({ date, weight: wl[date] }))
     const today = cal.dateKey()
     // 当前体重 = 最新记录；否则用资料里的当前体重
     const latest = keys.length ? wl[keys[keys.length - 1]] : profile.weight
+    const startWeight = keys.length ? wl[keys[0]] : profile.weight
     if (profile.weight !== latest) {
       profile.weight = latest
       cal.saveProfile(profile)
     }
     const ov = cal.planOverview(profile)
+
+    // 历史列表：补充星期、相对变化标签
+    const dows = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
+    const list = keys
+      .slice()
+      .reverse()
+      .map((date, i) => {
+        const w = wl[date]
+        let deltaClass = 'flat'
+        let deltaText = ''
+        if (i > 0) {
+          const prevW = wl[keys[keys.length - 1 - i]] // 上一条（倒序后前一条对应原序列更早一条）
+          const diff = w - prevW
+          if (Math.abs(diff) < 0.05) {
+            deltaClass = 'flat'
+            deltaText = '—'
+          } else if (diff < 0) {
+            deltaClass = 'down'
+            deltaText = diff.toFixed(1)
+          } else {
+            deltaClass = 'up'
+            deltaText = '+' + diff.toFixed(1)
+          }
+        }
+        const d = new Date(date.replace(/-/g, '/'))
+        return { date, weight: w, dow: dows[d.getDay()], deltaClass, deltaText }
+      })
+
+    // 整体趋势标签
+    let trendClass = 'flat'
+    let trendText = '持平'
+    if (keys.length >= 2) {
+      const diff = latest - startWeight
+      if (diff < -0.05) {
+        trendClass = 'down'
+        trendText = '↓ 下降中'
+      } else if (diff > 0.05) {
+        trendClass = 'up'
+        trendText = '↑ 上升中'
+      }
+    }
+
     this.setData({
       weightInput: wl[today] != null ? String(wl[today]) : '',
       list,
@@ -49,7 +88,10 @@ Page({
         lost: ov.lost,
         remain: ov.remain,
         daysToGoal: ov.daysToGoal,
-        progressPercent: Math.round(ov.progress * 100)
+        progressPercent: Math.round(ov.progress * 100),
+        startWeight: startWeight,
+        trendClass,
+        trendText
       }
     })
     this.drawTrend()
@@ -140,7 +182,7 @@ Page({
         // 目标线
         if (target != null) {
           const ty = yOf(target)
-          ctx.strokeStyle = '#ff7043'
+          ctx.strokeStyle = '#ff7e8a'
           ctx.setLineDash([6, 6])
           ctx.lineWidth = 1.5
           ctx.beginPath()
@@ -148,14 +190,15 @@ Page({
           ctx.lineTo(W - padR, ty)
           ctx.stroke()
           ctx.setLineDash([])
-          ctx.fillStyle = '#ff7043'
+          ctx.fillStyle = '#ff7e8a'
           ctx.font = '11px sans-serif'
           ctx.fillText('目标', 4, ty + 4)
         }
 
         // 折线
-        ctx.strokeStyle = '#4caf50'
+          ctx.strokeStyle = '#ff7e8a'
         ctx.lineWidth = 2.5
+        ctx.lineJoin = 'round'
         ctx.beginPath()
         pts.forEach((p, i) => {
           const x = xOf(i)
@@ -169,7 +212,7 @@ Page({
         pts.forEach((p, i) => {
           const x = xOf(i)
           const y = yOf(p.y)
-          ctx.fillStyle = i === pts.length - 1 ? '#ff7043' : '#4caf50'
+          ctx.fillStyle = i === pts.length - 1 ? '#ff7e8a' : '#ffc2c9'
           ctx.beginPath()
           ctx.arc(x, y, i === pts.length - 1 ? 5 : 3.5, 0, Math.PI * 2)
           ctx.fill()

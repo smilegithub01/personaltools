@@ -1,242 +1,271 @@
-/* pages/calorie/calorie.wxss */
-.container {
-  padding: 24rpx;
-  min-height: 100vh;
-  box-sizing: border-box;
-}
-/* 运动激励 Banner */
+/* pages/calorie/calorie.wxss - 首页视觉升级 */
+
+/* 顶部 Banner —— 图片全铺、文字叠加左下角不挡人 */
 .fitness-banner {
   position: relative;
-  height: 270rpx;
-  border-radius: 24rpx;
+  width: 100%;
+  height: 380rpx;
+  border-radius: 32rpx;
+  margin-bottom: 28rpx;
   overflow: hidden;
-  margin-bottom: 24rpx;
-  background: #18352d;
-  box-shadow: 0 10rpx 28rpx rgba(42, 56, 48, 0.2);
+  box-shadow: 0 12rpx 30rpx rgba(255, 126, 138, 0.28);
 }
-.fitness-banner-img {
+.fitness-banner-bg {
+  position: absolute;
+  top: 0; left: 0;
   width: 100%;
   height: 100%;
   display: block;
 }
-.fitness-banner-shade {
+/* 底部渐变遮罩 —— 让文字清晰可读 */
+.fitness-banner-overlay {
   position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, rgba(13, 31, 27, 0.84) 0%, rgba(13, 31, 27, 0.55) 46%, rgba(13, 31, 27, 0.06) 82%);
+  left: 0; bottom: 0; right: 0;
+  height: 60%;
+  background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.15) 60%, transparent 100%);
+  pointer-events: none;
 }
+/* 文字区：严格限制左下角，不越过中线 */
 .fitness-banner-copy {
   position: absolute;
-  left: 32rpx;
-  right: 210rpx;
+  left: 28rpx;
   bottom: 32rpx;
-  z-index: 1;
+  width: 52%;
+  max-width: 380rpx;
+  z-index: 2;
+  color: #fff;
 }
 .fitness-banner-title {
-  color: #fff;
-  font-size: 34rpx;
-  line-height: 1.35;
+  font-size: 30rpx;
   font-weight: 700;
-  text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.24);
+  letter-spacing: 0.3rpx;
+  line-height: 1.4;
+  margin-bottom: 8rpx;
+  text-shadow: 0 2rpx 10rpx rgba(0,0,0,0.3);
 }
 .fitness-banner-sub {
-  color: rgba(255, 255, 255, 0.82);
   font-size: 22rpx;
+  line-height: 1.45;
+  opacity: 0.88;
+  text-shadow: 0 1rpx 6rpx rgba(0,0,0,0.25);
+}
+
+/* 健康概览顶部条 */
+.ov-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding-bottom: 24rpx;
+  margin-bottom: 8rpx;
+  border-bottom: 1rpx solid #f0f1ef;
+}
+.ov-top-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.ov-top-val {
+  font-size: 38rpx;
+  font-weight: 700;
+  color: #1d1d1f;
+}
+.ov-top-val.bmi-low { color: #2f80ed; }
+.ov-top-val.bmi-normal { color: #2fa86a; }
+.ov-top-val.bmi-high { color: #ef8c2f; }
+.ov-top-val.bmi-obese { color: #e53935; }
+.ov-top-unit { font-size: 22rpx; font-weight: 500; color: #9ca3af; }
+.ov-top-label { font-size: 22rpx; color: #9ca3af; margin-top: 6rpx; }
+.ov-top-div {
+  width: 1rpx;
+  height: 56rpx;
+  background: #f0f1ef;
+}
+
+/* 进度概览卡片 */
+.result-card {
+  background: #ffffff;
+  border-radius: 24rpx;
+  padding: 32rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 6rpx 24rpx rgba(24, 53, 45, 0.06);
+}
+.result-ring {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 28rpx;
+}
+.ring-bg {
+  stroke: #f0ede9;
+}
+.ring-fg {
+  stroke: #ff7e8a;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.8s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.ring-center {
+  text-anchor: middle;
+  fill: #1d1d1f;
+  font-size: 42rpx;
+  font-weight: 800;
+}
+.ring-center-sub {
+  text-anchor: middle;
+  fill: #b0b5ba;
+  font-size: 20rpx;
+}
+
+/* 概览指标行 —— 更精致的卡片式 */
+.metrics {
+  display: flex;
+  border-top: 1rpx solid #f2efe9;
+  padding-top: 28rpx;
+}
+.metric {
+  flex: 1;
+  text-align: center;
+  position: relative;
+}
+.metric + .metric::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 4rpx;
+  bottom: 12rpx;
+  width: 1rpx;
+  background: #f2efe9;
+}
+.metric-val {
+  font-size: 38rpx;
+  font-weight: 800;
+  color: #1d1d1f;
+  letter-spacing: -0.5rpx;
+}
+.metric-val.pos { color: #2fa86a; }
+.metric-label {
+  font-size: 21rpx;
+  color: #b0b5ba;
   margin-top: 10rpx;
 }
 
-.card {
-  background: #fff;
-  border-radius: 20rpx;
-  padding: 28rpx;
-  margin-bottom: 24rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+/* 今日明细 */
+.detail { margin-bottom: 24rpx; }
+.dt-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18rpx 0;
 }
-/* 引导 */
-.guide {
+.dt-row + .dt-row { border-top: 1rpx solid #f5f6f4; }
+.dt-name { font-size: 28rpx; color: #1d1d1f; }
+.dt-sub { font-size: 22rpx; color: #9ca3af; margin-top: 4rpx; }
+.dt-kcal { font-size: 26rpx; color: #ff7e8a; font-weight: 600; }
+.empty-tip {
   text-align: center;
-  padding: 60rpx 40rpx;
+  color: #9ca3af;
+  font-size: 24rpx;
+  padding: 24rpx 0;
 }
-.guide-emoji {
-  font-size: 80rpx;
+
+/* AI 饮食推荐 */
+.reco {
+  background: linear-gradient(135deg, #eef4ff, #f3eaff);
+  border-radius: 18rpx;
+  padding: 22rpx 24rpx;
+  margin-bottom: 20rpx;
+}
+.reco-head {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  font-size: 25rpx;
+  color: #6a5acd;
+  font-weight: 600;
+  margin-bottom: 14rpx;
+}
+.reco-list { display: flex; flex-direction: column; gap: 12rpx; }
+.reco-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border-radius: 14rpx;
+  padding: 16rpx 20rpx;
+  transition: transform 0.15s ease;
+}
+.reco-item:active { transform: scale(0.98); }
+.reco-main { display: flex; flex-direction: column; }
+.reco-name { font-size: 26rpx; color: #333; font-weight: 500; }
+.reco-cat { font-size: 20rpx; color: #999; margin-top: 4rpx; }
+.reco-kcal { font-size: 22rpx; color: #ff7e8a; }
+
+/* 操作按钮 —— 统一卡片风格，主次分明 */
+.actions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16rpx;
+  margin-top: 8rpx;
+}
+.action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10rpx;
+  border-radius: 20rpx;
+  padding: 28rpx 0 22rpx;
+  text-align: center;
+  font-size: 25rpx;
+  font-weight: 500;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+/* 四个按钮统一浅底同色系，不深红 */
+.action-btn.tap {
+  background: #fff5f6;
+  color: #c85a66;
+  box-shadow: 0 2rpx 12rpx rgba(200, 90, 102, 0.06);
+}
+/* 次要操作：同色系浅底 */
+.action-btn.ghost {
+  background: #fff5f6;
+  color: #c85a66;
+  box-shadow: 0 2rpx 12rpx rgba(200, 90, 102, 0.06);
+}
+.action-btn:active { transform: scale(0.96); opacity: 0.88; }
+.action-btn.ghost:active { background: #ffeef0; }
+
+/* 引导卡 */
+.guide { text-align: center; padding: 48rpx 32rpx; }
+.guide-icon {
+  width: 128rpx;
+  height: 128rpx;
+  margin: 0 auto 24rpx;
+  border-radius: 50%;
+  background: #fff3f4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .guide-title {
   font-size: 34rpx;
   font-weight: 700;
-  color: #222;
-  margin: 16rpx 0 10rpx;
+  color: #1d1d1f;
+  margin-bottom: 12rpx;
 }
 .guide-sub {
   font-size: 26rpx;
-  color: #999;
+  color: #9ca3af;
   line-height: 1.6;
-  margin-bottom: 30rpx;
+  margin-bottom: 32rpx;
 }
-.guide-btn {
-  background: #ff7043;
-  color: #fff;
-  border-radius: 44rpx;
-  font-size: 30rpx;
-}
-/* 计划概览 */
-.plan {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: linear-gradient(135deg, #fff3ea, #ffe6da);
-}
-.plan-num {
-  font-size: 48rpx;
-  font-weight: 800;
-  color: #ff7043;
-}
-.plan-label {
-  font-size: 24rpx;
-  color: #b5653f;
-  margin-top: 4rpx;
-}
-.plan-sub {
-  font-size: 22rpx;
-  color: #c08a72;
-  margin-top: 10rpx;
-}
-.plan-right {
-  text-align: center;
-}
-.plan-days {
-  font-size: 44rpx;
-  font-weight: 800;
-  color: #333;
-}
-.plan-days.done {
-  color: #4caf50;
-  font-size: 34rpx;
-}
-.plan-days-unit {
-  font-size: 24rpx;
-  font-weight: 400;
-  margin-left: 4rpx;
-}
-.plan-days-label {
-  font-size: 22rpx;
-  color: #999;
-  margin-top: 4rpx;
-}
-/* 今日环形 */
-.today {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.ring {
-  width: 280rpx;
-  height: 280rpx;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 10rpx 0 24rpx;
-}
-.ring-inner {
-  width: 210rpx;
-  height: 210rpx;
-  background: #fff;
-  border-radius: 50%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-.ring-num {
-  font-size: 46rpx;
-  font-weight: 800;
-  color: #ff7043;
-}
-.ring-num.over {
-  color: #e53935;
-}
-.ring-label {
-  font-size: 22rpx;
-  color: #999;
-  margin-top: 6rpx;
-}
-.today-stats {
-  display: flex;
-  width: 100%;
-  justify-content: space-around;
-}
-.ts {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.ts-num {
-  font-size: 32rpx;
-  font-weight: 700;
-  color: #333;
-}
-.ts-label {
-  font-size: 22rpx;
-  color: #999;
-  margin-top: 6rpx;
-}
-/* 快捷操作 */
-.actions {
-  display: flex;
-  gap: 16rpx;
-  margin-bottom: 24rpx;
-}
-.action {
-  flex: 1;
-  background: #fff;
-  border-radius: 20rpx;
-  padding: 24rpx 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
-}
-.a-ico {
-  font-size: 44rpx;
-}
-.a-txt {
-  font-size: 24rpx;
-  color: #555;
-  margin-top: 10rpx;
-}
-/* 明细 */
-.sec-title {
-  font-size: 30rpx;
-  font-weight: 600;
-  color: #222;
-  margin-bottom: 16rpx;
-}
-.empty {
-  text-align: center;
-  color: #bbb;
-  font-size: 26rpx;
-  padding: 30rpx 0;
-}
-.dt-group {
-  margin-top: 10rpx;
-}
+.guide-btn { width: 100%; }
+
+/* 明细分组标题 */
 .dt-head {
-  font-size: 24rpx;
-  color: #777;
-  margin: 14rpx 0 8rpx;
-}
-.dt-row {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 14rpx 0;
-  border-bottom: 1rpx solid #f5f5f5;
-}
-.dt-name {
-  font-size: 26rpx;
-  color: #444;
-}
-.dt-kcal {
-  font-size: 26rpx;
-  color: #ff7043;
+  gap: 8rpx;
+  font-size: 27rpx;
   font-weight: 600;
+  color: #4b5563;
+  margin: 12rpx 0 8rpx;
 }

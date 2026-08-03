@@ -1,13 +1,19 @@
-/* app.wxss - 全局样式 */
+/* app.wxss - 全局设计系统
+ * 设计令牌：配色 / 字体 / 卡片 / 按钮 / 动效
+ * 所有页面共享，保证视觉一致、专业、自然。
+ */
 
 page {
-  background-color: #f5f5f5;
+  /* 背景：温和的米白粉调，营造自然呼吸感 */
+  background-color: #faf6f5;
   font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue",
-    Helvetica, Segoe UI, Arial, Roboto, "PingFang SC",
-    "Hiragino Sans GB", "Microsoft Yahei", sans-serif;
-  color: #333;
+    Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  color: #1d1d1f;
   font-size: 28rpx;
   line-height: 1.6;
+  /* 平滑字体渲染 */
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 .container {
@@ -15,28 +21,121 @@ page {
   flex-direction: column;
   min-height: 100vh;
   box-sizing: border-box;
-  padding: 32rpx;
+  padding: 28rpx 28rpx calc(28rpx + env(safe-area-inset-bottom));
 }
 
-/* 通用卡片 */
+/* ---------- 通用卡片 ---------- */
+/* 统一圆角、留白与柔和阴影，建立清晰层次 */
 .card {
   background: #ffffff;
-  border-radius: 16rpx;
+  border-radius: 24rpx;
   padding: 32rpx;
   margin-bottom: 24rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.06);
+  box-shadow: 0 6rpx 24rpx rgba(24, 53, 45, 0.06);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
-/* 通用按钮 */
+/* 区块标题：清晰的字号/字重对比 */
+.sec-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #1d1d1f;
+  letter-spacing: 0.5rpx;
+  margin-bottom: 20rpx;
+}
+
+/* ---------- 通用按钮 ---------- */
+/* 主按钮：柔珊瑚渐变，统一圆角与按压反馈 */
 .btn-primary {
-  background-color: #07c160;
+  background: linear-gradient(135deg, #ff9a9e, #ff7e8a);
   color: #ffffff;
-  border-radius: 8rpx;
-  padding: 20rpx 32rpx;
+  border-radius: 16rpx;
+  padding: 22rpx 32rpx;
   text-align: center;
   font-size: 30rpx;
+  font-weight: 600;
+  border: none;
+  box-shadow: 0 8rpx 20rpx rgba(255, 126, 138, 0.28);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+.btn-primary:active {
+  transform: scale(0.97);
+  opacity: 0.92;
+  box-shadow: 0 4rpx 12rpx rgba(255, 126, 138, 0.22);
 }
 
-.btn-primary:active {
-  opacity: 0.85;
+/* 次级/浅色按钮 */
+.btn-ghost {
+  background: #f1f3f1;
+  color: #4b5563;
+  border-radius: 16rpx;
+  padding: 22rpx 32rpx;
+  text-align: center;
+  font-size: 30rpx;
+  font-weight: 500;
+  transition: transform 0.15s ease, background 0.15s ease;
 }
+.btn-ghost:active {
+  transform: scale(0.97);
+  background: #e7eae7;
+}
+
+/* ---------- 通用文本层级 ---------- */
+.text-strong { color: #1d1d1f; font-weight: 600; }
+.text-muted { color: #6b7280; }
+.text-weak { color: #9ca3af; }
+.text-accent { color: #ff6f80; }
+.text-pos { color: #2fa86a; }
+
+/* ---------- 入场动画 ---------- */
+/* 卡片级淡入上移，营造自然过渡 */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16rpx); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.anim-in {
+  animation: fadeUp 0.45s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+/* 通用可点击元素的轻反馈 */
+.tap {
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+.tap:active {
+  transform: scale(0.97);
+}
+
+/* ---------- 线性图标系统（SVG，无 emoji） ---------- */
+/* 统一 1.8 描边、圆角端点、24x24 viewBox，矢量清晰、随主题统一 */
+.icon {
+  display: inline-block;
+  width: 32rpx;
+  height: 32rpx;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  vertical-align: middle;
+}
+/* 主色（珊瑚）变体 */
+.icon.p { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ff7e8a' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E__PATH__%3C/svg%3E"); }
+/* 中性灰变体 */
+.icon.m { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235b6470' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E__PATH__%3C/svg%3E"); }
+
+/* 饮食（碗） */
+.icon-food.p { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ff7e8a' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 11h18a8 8 0 0 1-8 8h-2a8 8 0 0 1-8-8z'/%3E%3Cpath d='M12 3v5'/%3E%3C/svg%3E"); }
+.icon-food.m { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235b6470' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 11h18a8 8 0 0 1-8 8h-2a8 8 0 0 1-8-8z'/%3E%3Cpath d='M12 3v5'/%3E%3C/svg%3E"); }
+/* 运动（脉冲） */
+.icon-ex.p { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ff7e8a' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 12h4l2 6 4-14 2 8h6'/%3E%3C/svg%3E"); }
+.icon-ex.m { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235b6470' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 12h4l2 6 4-14 2 8h6'/%3E%3C/svg%3E"); }
+/* 体重（秤） */
+.icon-weight.p { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ff7e8a' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='4' y='7' width='16' height='13' rx='2'/%3E%3Cpath d='M12 7V4'/%3E%3Ccircle cx='12' cy='14' r='3'/%3E%3C/svg%3E"); }
+.icon-weight.m { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235b6470' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='4' y='7' width='16' height='13' rx='2'/%3E%3Cpath d='M12 7V4'/%3E%3Ccircle cx='12' cy='14' r='3'/%3E%3C/svg%3E"); }
+/* 设置（齿轮） */
+.icon-gear.p { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ff7e8a' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3Cpath d='M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2'/%3E%3C/svg%3E"); }
+.icon-gear.m { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235b6470' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3Cpath d='M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2'/%3E%3C/svg%3E"); }
+/* 智能 AI（sparkle） */
+.icon-ai.p { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ff7e8a' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3l1.8 4.2L18 9l-4.2 1.8L12 15l-1.8-4.2L6 9l4.2-1.8z'/%3E%3Cpath d='M18 14l.9 2.1L21 17l-2.1.9L18 20l-.9-2.1L15 17l2.1-.9z'/%3E%3C/svg%3E"); }
+/* 列表（明细） */
+.icon-list.m { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235b6470' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01'/%3E%3C/svg%3E"); }
+/* 目标（引导） */
+.icon-target.p { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ff7e8a' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Ccircle cx='12' cy='12' r='4'/%3E%3Ccircle cx='12' cy='12' r='1'/%3E%3C/svg%3E"); }
