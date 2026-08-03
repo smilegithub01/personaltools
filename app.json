@@ -3,7 +3,11 @@
     "pages/calorie/calorie",
     "pages/calorie/profile",
     "pages/calorie/add",
-    "pages/calorie/weight"
+    "pages/calorie/weight",
+    "pages/coach/coach",
+    "pages/growth/tree",
+    "pages/report/weekly",
+    "pages/rank/rank"
   ],
   "window": {
     "backgroundTextStyle": "light",
@@ -14,5 +18,10 @@
   },
   "style": "v2",
   "sitemapLocation": "sitemap.json",
-  "lazyCodeLoading": "requiredComponents"
+  "lazyCodeLoading": "requiredComponents",
+  "permission": {
+    "scope.writePhotosAlbum": {
+      "desc": "用于将周报卡片保存到你的相册，方便分享到朋友圈"
+    }
+  }
 }

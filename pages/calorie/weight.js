@@ -46,8 +46,9 @@ Page({
         const w = wl[date]
         let deltaClass = 'flat'
         let deltaText = ''
-        if (i > 0) {
-          const prevW = wl[keys[keys.length - 1 - i]] // 上一条（倒序后前一条对应原序列更早一条）
+        const originalIndex = keys.length - 1 - i
+        if (originalIndex > 0) {
+          const prevW = wl[keys[originalIndex - 1]]
           const diff = w - prevW
           if (Math.abs(diff) < 0.05) {
             deltaClass = 'flat'
@@ -107,13 +108,7 @@ Page({
       wx.showToast({ title: '请填写有效体重', icon: 'none' })
       return
     }
-    cal.saveWeight(cal.dateKey(), v)
-    // 同步更新资料里的当前体重
-    const p = cal.getProfile()
-    if (p) {
-      p.weight = v
-      cal.saveProfile(p)
-    }
+    if (!cal.saveWeight(cal.dateKey(), v)) return
     wx.showToast({ title: '已记录', icon: 'success' })
     this.refresh()
   },
@@ -125,7 +120,7 @@ Page({
       content: `确定删除 ${date} 的体重记录？`,
       success: (r) => {
         if (r.confirm) {
-          cal.saveWeight(date, '')
+          if (!cal.saveWeight(date, '')) return
           this.refresh()
         }
       }

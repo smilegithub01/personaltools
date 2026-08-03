@@ -1,0 +1,44 @@
+<view class="coach">
+  <!-- 顶部栏 -->
+  <view class="header">
+    <view class="title">AI 健康教练</view>
+    <view class="clear" bindtap="clearHistory">清空</view>
+  </view>
+
+  <!-- 消息列表 -->
+  <scroll-view class="msg-list" scroll-y scroll-top="{{scrollTop}}" scroll-with-animation>
+    <view wx:for="{{messages}}" wx:key="index" class="row {{item.role}}">
+      <view class="avatar {{item.role}}">{{item.role === 'user' ? '我' : 'AI'}}</view>
+      <view class="bubble {{item.role}}">{{item.content}}</view>
+    </view>
+    <view wx:if="{{loading}}" class="row assistant">
+      <view class="avatar assistant">AI</view>
+      <view class="bubble assistant loading">正在思考…</view>
+    </view>
+  </scroll-view>
+
+  <!-- 快捷提问 -->
+  <view class="quick" wx:if="{{messages.length <= 1}}">
+    <view class="quick-hint">试试这样问教练 👇</view>
+    <view class="quick-row">
+      <view class="chip" bindtap="quickAsk" data-q="我今天吃了麻辣烫，还剩多少额度？">🍜 吃了麻辣烫</view>
+      <view class="chip" bindtap="quickAsk" data-q="晚上还能吃点什么？">🌙 晚上吃啥</view>
+      <view class="chip" bindtap="quickAsk" data-q="为什么今天剩余这么少？">❓ 为啥剩这么少</view>
+    </view>
+  </view>
+
+  <!-- 今日额度 -->
+  <view class="quota">
+    <view class="quota-bar">
+      <view class="quota-fill" style="width: {{quotaLimit ? (quotaUsed / quotaLimit * 100) : 0}}%;"></view>
+    </view>
+    <view class="quota-text">今日提问 {{quotaUsed}}/{{quotaLimit}}</view>
+  </view>
+
+  <!-- 输入栏 -->
+  <view class="input-bar">
+    <input class="input" value="{{input}}" placeholder="跟教练说点什么…" confirm-type="send"
+           bindinput="onInput" bindconfirm="send" />
+    <view class="send-btn {{loading ? 'disabled' : ''}}" bindtap="send">发送</view>
+  </view>
+</view>

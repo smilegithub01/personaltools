@@ -100,7 +100,7 @@ function predictMeal(date) {
 
 // 根据用户历史记录，返回最常吃的若干食物（用于"常吃"快捷区）
 function frequentFoods(limit) {
-  const all = wx.getStorageSync(cal.K_LOGS) || {}
+  const all = cal.getAllLogs()
   const counter = {}
   Object.keys(all).forEach((d) => {
     ;(all[d].foods || []).forEach((f) => {
@@ -136,7 +136,7 @@ function motivate(ctx) {
 // 计算连续打卡天数（基于有饮食或运动或体重记录的最近连续日期）
 // 今天还没记录则不计入但当天的“空缺”不中断序列（从昨天往前算）
 function calcStreak() {
-  const logs = wx.getStorageSync(cal.K_LOGS) || {}
+  const logs = cal.getAllLogs()
   const wl = cal.getWeightLog()
   const days = new Set(Object.keys(logs).filter((k) => {
     const e = logs[k]
@@ -197,7 +197,7 @@ function recommendFoods(remaining, limit) {
 
 // 本周达标率：最近 7 天中“未超标”的天数占比
 function weeklyCompliance() {
-  const logs = wx.getStorageSync(cal.K_LOGS) || {}
+  const logs = cal.getAllLogs()
   const profile = cal.getProfile()
   if (!profile) return 0
   let done = 0

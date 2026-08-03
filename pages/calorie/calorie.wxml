@@ -2,11 +2,39 @@
 <view class="container">
   <!-- 激励 Banner —— 图片全铺 + 文字叠加 -->
   <view class="fitness-banner anim-in">
-    <image class="fitness-banner-bg" src="/images/fitness-banner.png" mode="aspectFill"></image>
+    <image class="fitness-banner-bg" src="{{bannerImg}}" mode="aspectFill"></image>
     <view class="fitness-banner-overlay"></view>
     <view class="fitness-banner-copy">
       <view class="fitness-banner-title">{{bannerTitle}}</view>
       <view class="fitness-banner-sub">{{bannerSub}}</view>
+    </view>
+  </view>
+
+  <!-- AI 健康教练入口（Banner 下方） -->
+  <view class="coach-entry anim-in" style="animation-delay:0.05s" bindtap="goCoach">
+    <view class="ce-icon"><view class="icon icon-ai p"></view></view>
+    <view class="ce-text">
+      <view class="ce-title">AI 健康教练</view>
+      <view class="ce-sub">结合你的剩余热量，随时问、随时答</view>
+    </view>
+    <view class="ce-arrow">›</view>
+  </view>
+
+  <!-- 生长中心：三大留存/裂变功能入口 -->
+  <view class="growth-center">
+    <view class="gc-grid">
+      <view class="gc-card" bindtap="goTree">
+        <text class="gc-icon">🌱</text>
+        <text class="gc-name">我的生长树</text>
+      </view>
+      <view class="gc-card" bindtap="goReport">
+        <text class="gc-icon">📊</text>
+        <text class="gc-name">周报卡片</text>
+      </view>
+      <view class="gc-card" bindtap="goRank">
+        <text class="gc-icon">👥</text>
+        <text class="gc-name">好友生长榜</text>
+      </view>
     </view>
   </view>
 
@@ -22,18 +50,27 @@
     <!-- 计划概览 -->
     <view class="card anim-in" style="animation-delay:0.05s">
       <view class="ov-top">
-        <view class="ov-top-item">
-          <text class="ov-top-val">{{ov.currentWeight}} <text class="ov-top-unit">kg</text></text>
+        <view class="ov-top-item ov-top-item--privacy">
+          <text class="ov-top-val">{{hiddenWeight ? '•••' : ov.currentWeight}} <text class="ov-top-unit">kg</text></text>
           <text class="ov-top-label">当前体重</text>
         </view>
         <view class="ov-top-div"></view>
-        <view class="ov-top-item" wx:if="{{bmi}}">
-          <text class="ov-top-val bmi-{{bmi.cls}}">{{bmi.bmi}}</text>
-          <text class="ov-top-label">BMI · {{bmi.level}}</text>
+        <view class="ov-top-item ov-top-item--privacy" wx:if="{{bmi}}">
+          <text class="ov-top-val bmi-{{bmi.cls}}">{{hiddenWeight ? '•••' : bmi.bmi}}</text>
+          <text class="ov-top-label">BMI · {{hiddenWeight ? '私密' : bmi.level}}</text>
         </view>
-        <view class="ov-top-item" wx:else>
-          <text class="ov-top-val">—</text>
+        <view class="ov-top-item ov-top-item--privacy" wx:else>
+          <text class="ov-top-val">{{hiddenWeight ? '•••' : '—'}}</text>
           <text class="ov-top-label">BMI</text>
+        </view>
+        <!-- 隐私眼睛：点击切换显示/隐藏体重与 BMI（一套线性图标：睁眼/闭眼） -->
+        <view class="ov-eye" catchtap="toggleWeight" aria-label="切换隐私显示">
+          <view class="icon icon-eye {{hiddenWeight ? 'closed' : ''}}"></view>
+        </view>
+        <view class="ov-top-div"></view>
+        <view class="ov-top-item">
+          <text class="ov-top-val text-accent">{{compliance}}%</text>
+          <text class="ov-top-label">本周达标</text>
         </view>
         <view class="ov-top-div"></view>
         <view class="ov-top-item">
@@ -122,7 +159,7 @@
 
       <view wx:if="{{foods.length>0}}">
         <view class="dt-head"><view class="icon icon-list m"></view>饮食（{{foodKcal}} kcal）</view>
-        <view class="dt-row" wx:for="{{foods}}" wx:key="idx" wx:for-index="idx">
+        <view class="dt-row" wx:for="{{foods}}" wx:key="index" wx:for-index="idx" bindlongpress="deleteRecord" data-type="food" data-idx="{{idx}}">
           <view>
             <view class="dt-name">{{item.meal}} · {{item.name}}</view>
             <view class="dt-sub">{{item.grams}} g</view>
@@ -133,7 +170,7 @@
 
       <view wx:if="{{exercises.length>0}}" style="margin-top:12rpx">
         <view class="dt-head"><view class="icon icon-list m"></view>运动（{{exerciseKcal}} kcal）</view>
-        <view class="dt-row" wx:for="{{exercises}}" wx:key="idx" wx:for-index="idx">
+        <view class="dt-row" wx:for="{{exercises}}" wx:key="index" wx:for-index="idx" bindlongpress="deleteRecord" data-type="exercise" data-idx="{{idx}}">
           <view>
             <view class="dt-name">{{item.name}}</view>
             <view class="dt-sub">{{item.duration}} 分钟</view>
@@ -141,6 +178,7 @@
           <text class="dt-kcal" style="color:#2fa86a">+{{item.kcal}} kcal</text>
         </view>
       </view>
+      <view class="detail-hint" wx:if="{{foods.length>0 || exercises.length>0}}">长按记录可删除</view>
     </view>
   </block>
 </view>

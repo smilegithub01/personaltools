@@ -76,8 +76,8 @@ Page({
       wx.showToast({ title: '请选择食物', icon: 'none' })
       return
     }
-    if (!g || g <= 0) {
-      wx.showToast({ title: '请填写克数', icon: 'none' })
+    if (!Number.isFinite(g) || g <= 0) {
+      wx.showToast({ title: '请填写有效克数', icon: 'none' })
       return
     }
     if (g > 5000) {
@@ -85,10 +85,14 @@ Page({
       return
     }
     const kcal = cal.calcFoodKcal(selFood.kcal, g)
+    if (!Number.isFinite(kcal) || kcal <= 0 || kcal > 50000) {
+      wx.showToast({ title: '本次热量数值异常', icon: 'none' })
+      return
+    }
     const today = cal.dateKey()
     const day = cal.getDayLog(today)
-    day.foods.push({ name: selFood.name, kcal, grams: g, meal })
-    cal.saveDayLog(today, day)
+    day.foods.push({ name: selFood.name.slice(0, 30), kcal, grams: g, meal })
+    if (!cal.saveDayLog(today, day)) return
     wx.showToast({ title: `已记录 ${kcal} kcal`, icon: 'success' })
     setTimeout(() => wx.navigateBack(), 500)
   },
@@ -132,8 +136,8 @@ Page({
       wx.showToast({ title: '请选择运动', icon: 'none' })
       return
     }
-    if (!m || m <= 0) {
-      wx.showToast({ title: '请填写运动时长', icon: 'none' })
+    if (!Number.isFinite(m) || m <= 0) {
+      wx.showToast({ title: '请填写有效运动时长', icon: 'none' })
       return
     }
     if (m > 600) {
@@ -141,10 +145,14 @@ Page({
       return
     }
     const kcal = cal.calcExerciseKcal(selEx.met, m, this.data.weight)
+    if (!Number.isFinite(kcal) || kcal <= 0 || kcal > 10000) {
+      wx.showToast({ title: '本次消耗热量异常', icon: 'none' })
+      return
+    }
     const today = cal.dateKey()
     const day = cal.getDayLog(today)
-    day.exercises.push({ name: selEx.name, kcal, duration: m })
-    cal.saveDayLog(today, day)
+    day.exercises.push({ name: selEx.name.slice(0, 30), kcal, duration: m })
+    if (!cal.saveDayLog(today, day)) return
     wx.showToast({ title: `已记录 ${kcal} kcal`, icon: 'success' })
     setTimeout(() => wx.navigateBack(), 500)
   }

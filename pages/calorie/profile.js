@@ -23,12 +23,13 @@ Page({
     const p = cal.getProfile()
     if (p) {
       const idx = cal.ACTIVITY.findIndex((a) => a.key === p.activity)
+      const latestWeight = cal.getLatestWeight()
       this.setData({
         isEdit: true,
         gender: p.gender || 'male',
         age: p.age != null ? String(p.age) : '',
         height: p.height != null ? String(p.height) : '',
-        weight: p.weight != null ? String(p.weight) : '',
+        weight: latestWeight != null ? String(latestWeight) : (p.weight != null ? String(p.weight) : ''),
         activityIndex: idx >= 0 ? idx : 1,
         targetWeight: p.targetWeight != null ? String(p.targetWeight) : '',
         weeklyRate: p.weeklyRate || 0.5
@@ -96,20 +97,24 @@ Page({
     const height = Number(d.height)
     const weight = Number(d.weight)
     const targetWeight = Number(d.targetWeight)
-    if (!age || age < 10 || age > 100) {
-      wx.showToast({ title: '请填写有效年龄', icon: 'none' })
+    if (!Number.isInteger(age) || age < 10 || age > 100) {
+      wx.showToast({ title: '年龄请输入 10-100 的整数', icon: 'none' })
       return
     }
-    if (!height || height < 100 || height > 250) {
-      wx.showToast({ title: '请填写有效身高', icon: 'none' })
+    if (!Number.isFinite(height) || height < 100 || height > 250) {
+      wx.showToast({ title: '身高请输入 100-250 cm', icon: 'none' })
       return
     }
-    if (!weight || weight < 30 || weight > 300) {
-      wx.showToast({ title: '请填写有效体重', icon: 'none' })
+    if (!Number.isFinite(weight) || weight < 20 || weight > 300) {
+      wx.showToast({ title: '体重请输入 20-300 kg', icon: 'none' })
       return
     }
-    if (!targetWeight || targetWeight <= 0) {
-      wx.showToast({ title: '请填写目标体重', icon: 'none' })
+    if (!Number.isFinite(targetWeight) || targetWeight < 20 || targetWeight > 300) {
+      wx.showToast({ title: '目标体重请输入 20-300 kg', icon: 'none' })
+      return
+    }
+    if (targetWeight >= weight) {
+      wx.showToast({ title: '减重目标需低于当前体重', icon: 'none' })
       return
     }
     // 目标体重健康下限：BMI 18.5 对应体重，避免设定过低伤害身体
@@ -138,11 +143,9 @@ Page({
       targetWeight,
       weeklyRate: Number(d.weeklyRate)
     }
-    cal.saveProfile(profile)
-    // 同时记录今日体重（若未记录）
-    const today = cal.dateKey()
-    const wl = cal.getWeightLog()
-    if (!wl[today]) cal.saveWeight(today, weight)
+    if (!cal.saveProfile(profile)) return
+    // 当前体重以每日体重记录为统一来源；同一天重复保存会覆盖，不会产生重复记录。
+    if (!cal.saveWeight(cal.dateKey(), weight)) return
     wx.showToast({ title: '已保存', icon: 'success' })
     setTimeout(() => {
       wx.navigateBack({

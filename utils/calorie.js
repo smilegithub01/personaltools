@@ -98,32 +98,104 @@ function dateKey(d) {
 }
 
 // ---------- 读写 ----------
+function safeGet(key, fallback) {
+  try {
+    const value = wx.getStorageSync(key)
+    return value === '' || value == null ? fallback : value
+  } catch (error) {
+    console.error(`读取本地数据失败: ${key}`, error)
+    return fallback
+  }
+}
+function safeSet(key, value) {
+  try {
+    wx.setStorageSync(key, value)
+    return true
+  } catch (error) {
+    console.error(`保存本地数据失败: ${key}`, error)
+    wx.showToast({ title: '本地数据保存失败', icon: 'none' })
+    return false
+  }
+}
+function isObject(value) {
+  return value && typeof value === 'object' && !Array.isArray(value)
+}
+function getAllLogs() {
+  const rawLogs = safeGet(K_LOGS, {})
+  if (!isObject(rawLogs)) return {}
+  const logs = {}
+  Object.keys(rawLogs).forEach((date) => {
+    const day = rawLogs[date]
+    if (!isObject(day)) return
+    logs[date] = {
+      foods: Array.isArray(day.foods) ? day.foods : [],
+      exercises: Array.isArray(day.exercises) ? day.exercises : []
+    }
+  })
+  return logs
+}
 function getProfile() {
-  return wx.getStorageSync(K_PROFILE) || null
+  const profile = safeGet(K_PROFILE, null)
+  return isObject(profile) ? profile : null
 }
 function saveProfile(p) {
-  wx.setStorageSync(K_PROFILE, p)
+  return safeSet(K_PROFILE, p)
 }
 function getWeightLog() {
-  return wx.getStorageSync(K_WEIGHT) || {}
+  const rawLog = safeGet(K_WEIGHT, {})
+  if (!isObject(rawLog)) return {}
+  const log = {}
+  Object.keys(rawLog).forEach((date) => {
+    const weight = Number(rawLog[date])
+    if (/^\d{4}-\d{2}-\d{2}$/.test(date) && Number.isFinite(weight) && weight >= 20 && weight <= 300) {
+      log[date] = weight
+    }
+  })
+  return log
+}
+function getLatestWeight(log) {
+  const weightLog = log || getWeightLog()
+  const keys = Object.keys(weightLog).sort()
+  return keys.length ? Number(weightLog[keys[keys.length - 1]]) : null
+}
+function syncProfileWeight(log) {
+  const profile = getProfile()
+  const latestWeight = getLatestWeight(log)
+  if (profile && Number.isFinite(latestWeight) && Number(profile.weight) !== latestWeight) {
+    saveProfile(Object.assign({}, profile, { weight: latestWeight }))
+  }
+  return latestWeight
 }
 function saveWeight(date, value) {
   const log = getWeightLog()
   if (value === '' || value == null) {
     delete log[date]
   } else {
-    log[date] = Number(value)
+    const weight = Number(value)
+    if (!Number.isFinite(weight) || weight < 20 || weight > 300) {
+      return false
+    }
+    log[date] = weight
   }
-  wx.setStorageSync(K_WEIGHT, log)
+  if (!safeSet(K_WEIGHT, log)) return false
+  syncProfileWeight(log)
+  return true
 }
 function getDayLog(date) {
-  const all = wx.getStorageSync(K_LOGS) || {}
-  return all[date] || { foods: [], exercises: [] }
+  const logs = getAllLogs()
+  const day = isObject(logs[date]) ? logs[date] : {}
+  return {
+    foods: Array.isArray(day.foods) ? day.foods : [],
+    exercises: Array.isArray(day.exercises) ? day.exercises : []
+  }
 }
 function saveDayLog(date, day) {
-  const all = wx.getStorageSync(K_LOGS) || {}
-  all[date] = day
-  wx.setStorageSync(K_LOGS, all)
+  const logs = getAllLogs()
+  logs[date] = {
+    foods: Array.isArray(day.foods) ? day.foods : [],
+    exercises: Array.isArray(day.exercises) ? day.exercises : []
+  }
+  return safeSet(K_LOGS, logs)
 }
 
 // ---------- 计算 ----------
@@ -242,7 +314,10 @@ module.exports = {
   getProfile,
   saveProfile,
   getWeightLog,
+  getLatestWeight,
+  syncProfileWeight,
   saveWeight,
+  getAllLogs,
   getDayLog,
   saveDayLog,
   calcBMR,

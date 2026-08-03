@@ -1,0 +1,37 @@
+<!-- pages/report/weekly.wxml —— 可分享周报卡片 -->
+<view class="report-page">
+
+  <!-- Canvas 卡片（离屏绘制，同时作为预览） -->
+  <view class="card-wrap">
+    <canvas type="2d" id="cardCanvas" class="card-canvas"></canvas>
+  </view>
+
+  <!-- 数据概览 -->
+  <view class="report-summary">
+    <view class="rs-item">
+      <text class="rs-num">{{report.checkinDays}}</text>
+      <text class="rs-label">本周打卡(天)</text>
+    </view>
+    <view class="rs-item">
+      <text class="rs-num">{{report.streak}}</text>
+      <text class="rs-label">连续打卡(天)</text>
+    </view>
+    <view class="rs-item">
+      <text class="rs-num">{{report.totalFood}}</text>
+      <text class="rs-label">摄入(kcal)</text>
+    </view>
+    <view class="rs-item">
+      <text class="rs-num">{{report.totalExercise}}</text>
+      <text class="rs-label">消耗(kcal)</text>
+    </view>
+  </view>
+
+  <!-- 操作 -->
+  <view class="report-actions">
+    <button class="r-btn primary" bindtap="saveCard">📥 保存卡片发朋友圈</button>
+    <button class="r-btn ghost" open-type="share">🔗 分享给好友</button>
+  </view>
+
+  <view wx:if="{{savedTip}}" class="report-tip">{{savedTip}}</view>
+  <view wx:else class="report-tip">保存图片到相册，发朋友圈就能带来新用户 🌱</view>
+</view>

@@ -13,7 +13,7 @@
   <!-- 概览 -->
   <view class="card overview anim-in" style="animation-delay:0.06s" wx:if="{{ov.currentWeight}}">
     <view class="ov-head">
-      <view class="ov-current">{{ov.currentWeight}}<small>kg</small></view>
+      <view class="ov-current">{{ov.currentWeight}}<text class="ov-unit">kg</text></view>
       <view class="ov-tag {{ov.trendClass}}">{{ov.trendText}}</view>
     </view>
     <view class="bar-wrap">

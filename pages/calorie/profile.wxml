@@ -57,20 +57,24 @@
   <view class="result anim-in" style="animation-delay:0.12s" wx:if="{{bmr}}">
     <view class="result-row">
       <text class="result-key">基础代谢 BMR</text>
-      <text class="result-val">{{bmr}} <small>kcal</small></text>
+      <text class="result-val">{{bmr}} <text class="result-unit">kcal</text></text>
     </view>
     <view class="result-row">
       <text class="result-key">每日总消耗 TDEE</text>
-      <text class="result-val">{{tdee}} <small>kcal</small></text>
+      <text class="result-val">{{tdee}} <text class="result-unit">kcal</text></text>
     </view>
     <view class="result-row">
       <text class="result-key">每日目标摄入</text>
-      <text class="result-val">{{target}} <small>kcal</small></text>
+      <text class="result-val">{{target}} <text class="result-unit">kcal</text></text>
     </view>
     <view class="result-bmi" wx:if="{{bmi}}">
       当前 BMI <text class="bmi-tag bmi-{{bmi.cls}}">{{bmi.bmi}} · {{bmi.level}}</text>
     </view>
     <view class="empty-tip" style="color:#e0892b;padding:12rpx 0 0" wx:if="{{warn}}">{{warn}}</view>
+  </view>
+
+  <view class="privacy-note">
+    身体资料、饮食和体重记录仅保存在当前设备，不会上传服务器；卸载小程序或清理微信数据后可能丢失。热量与体重目标为估算结果，仅供日常健康管理参考，不替代医生或营养师建议。
   </view>
 
   <button class="btn-primary footer anim-in" style="animation-delay:0.16s" bindtap="onSave">{{isEdit ? '保存修改' : '保存并开始'}}</button>

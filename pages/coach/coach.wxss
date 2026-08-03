@@ -1,0 +1,147 @@
+.coach {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #f6f7f5;
+  box-sizing: border-box;
+}
+
+/* 顶部栏 */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx 30rpx;
+  background: #18352d;
+  color: #fff;
+}
+.header .title { font-size: 34rpx; font-weight: 600; }
+.header .clear { font-size: 26rpx; opacity: 0.8; padding: 6rpx 12rpx; }
+
+/* 消息列表 */
+.msg-list {
+  flex: 1;
+  padding: 24rpx 24rpx 8rpx;
+  box-sizing: border-box;
+}
+.row {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 28rpx;
+}
+.row.user { flex-direction: row-reverse; }
+.avatar {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  font-size: 24rpx;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.avatar.assistant { background: #1a7a3c; }
+.avatar.user { background: #888; }
+.bubble {
+  max-width: 75%;
+  margin: 0 16rpx;
+  padding: 20rpx 24rpx;
+  border-radius: 20rpx;
+  font-size: 30rpx;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.bubble.assistant {
+  background: #fff;
+  color: #222;
+  border-top-left-radius: 4rpx;
+}
+.bubble.user {
+  background: #1a7a3c;
+  color: #fff;
+  border-top-right-radius: 4rpx;
+}
+.bubble.loading { color: #999; font-size: 26rpx; }
+
+/* 快捷提问 */
+.quick {
+  display: flex;
+  flex-direction: column;
+  padding: 8rpx 24rpx 16rpx;
+}
+.quick-hint {
+  font-size: 24rpx;
+  color: #999;
+  margin-bottom: 12rpx;
+}
+.quick-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+.chip {
+  background: #fff;
+  border: 1rpx solid #d8e6db;
+  color: #1a7a3c;
+  font-size: 26rpx;
+  padding: 12rpx 22rpx;
+  border-radius: 30rpx;
+}
+
+/* 今日额度 */
+.quota {
+  display: flex;
+  align-items: center;
+  padding: 10rpx 24rpx;
+  background: #f6f7f5;
+}
+.quota-bar {
+  flex: 1;
+  height: 12rpx;
+  background: #e3e9e4;
+  border-radius: 6rpx;
+  overflow: hidden;
+  margin-right: 16rpx;
+}
+.quota-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #2fa86a, #1a7a3c);
+  border-radius: 6rpx;
+  transition: width 0.3s ease;
+}
+.quota-text {
+  font-size: 22rpx;
+  color: #888;
+  white-space: nowrap;
+}
+
+/* 输入栏 */
+.input-bar {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 20rpx;
+  padding-bottom: calc(16rpx + env(safe-area-inset-bottom));
+  background: #fff;
+  border-top: 1rpx solid #eee;
+}
+.input {
+  flex: 1;
+  height: 72rpx;
+  background: #f2f3f1;
+  border-radius: 36rpx;
+  padding: 0 28rpx;
+  font-size: 30rpx;
+}
+.send-btn {
+  margin-left: 16rpx;
+  background: #1a7a3c;
+  color: #fff;
+  font-size: 30rpx;
+  padding: 0 32rpx;
+  height: 72rpx;
+  line-height: 72rpx;
+  border-radius: 36rpx;
+}
+.send-btn.disabled { opacity: 0.5; }
