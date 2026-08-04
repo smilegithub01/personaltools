@@ -55,6 +55,21 @@ Page({
     const f = cal.FOOD_DB.find((x) => x.name === name)
     this.setData({ selFood: f, grams: '', foodKcal: 0 })
   },
+  // 自定义食物：打开录入面板，进入自定义编辑态
+  onCustomFood() {
+    this.setData({
+      selFood: { name: '', kcal: '', cat: '自定义', custom: true },
+      grams: '',
+      foodKcal: 0
+    })
+  },
+  onCustomName(e) {
+    this.setData({ 'selFood.name': e.detail.value })
+  },
+  onCustomKcal(e) {
+    this.setData({ 'selFood.kcal': e.detail.value })
+    this.applyGrams(Number(this.data.grams))
+  },
   onMeal(e) {
     this.setData({ meal: e.currentTarget.dataset.m })
   },
@@ -66,7 +81,8 @@ Page({
   },
   applyGrams(g) {
     const f = this.data.selFood
-    const kcal = f && g ? cal.calcFoodKcal(f.kcal, g) : 0
+    const kcalPer100 = Number(f && f.kcal)
+    const kcal = f && kcalPer100 && g ? cal.calcFoodKcal(kcalPer100, g) : 0
     this.setData({ grams: g ? String(g) : '', foodKcal: kcal })
   },
   onAddFood() {
@@ -76,6 +92,20 @@ Page({
       wx.showToast({ title: '请选择食物', icon: 'none' })
       return
     }
+    let name = selFood.name
+    let kcalPer100 = Number(selFood.kcal)
+    // 自定义食物：校验名称与热量
+    if (selFood.custom) {
+      name = (name || '').trim()
+      if (!name) {
+        wx.showToast({ title: '请输入食物名称', icon: 'none' })
+        return
+      }
+      if (!Number.isFinite(kcalPer100) || kcalPer100 <= 0 || kcalPer100 > 5000) {
+        wx.showToast({ title: '请填写有效热量(每100g)', icon: 'none' })
+        return
+      }
+    }
     if (!Number.isFinite(g) || g <= 0) {
       wx.showToast({ title: '请填写有效克数', icon: 'none' })
       return
@@ -84,14 +114,14 @@ Page({
       wx.showToast({ title: '克数请控制在 5000 g 内', icon: 'none' })
       return
     }
-    const kcal = cal.calcFoodKcal(selFood.kcal, g)
+    const kcal = cal.calcFoodKcal(kcalPer100, g)
     if (!Number.isFinite(kcal) || kcal <= 0 || kcal > 50000) {
       wx.showToast({ title: '本次热量数值异常', icon: 'none' })
       return
     }
     const today = cal.dateKey()
     const day = cal.getDayLog(today)
-    day.foods.push({ name: selFood.name.slice(0, 30), kcal, grams: g, meal })
+    day.foods.push({ name: String(name).slice(0, 30), kcal, grams: g, meal })
     if (!cal.saveDayLog(today, day)) return
     wx.showToast({ title: `已记录 ${kcal} kcal`, icon: 'success' })
     setTimeout(() => wx.navigateBack(), 500)

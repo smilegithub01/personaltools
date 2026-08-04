@@ -75,6 +75,32 @@
   background: #ffe2d3;
 }
 
+/* 自定义食物入口 */
+.custom-entry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22rpx 28rpx;
+  background: #fff;
+  border-radius: 18rpx;
+  margin-bottom: 14rpx;
+  box-shadow: 0 4rpx 16rpx rgba(24, 53, 45, 0.05);
+  border: 1rpx dashed #ffd0c4;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+.custom-entry:active {
+  transform: scale(0.985);
+  background: #fff8f4;
+}
+.custom-entry-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+.custom-entry-text { font-size: 28rpx; color: #ff7e8a; font-weight: 600; }
+.custom-entry-hint { font-size: 22rpx; color: #9ca3af; }
+.custom-entry-arrow { font-size: 36rpx; color: #ffb3a8; line-height: 1; }
+
 /* 候选列表 */
 .list {
   height: calc(100vh - 560rpx);
@@ -182,3 +208,22 @@
   font-weight: 600;
   margin-left: 16rpx;
 }
+
+/* 自定义食物输入行 */
+.custom-row {
+  display: flex;
+  align-items: center;
+  background: #f6f7f5;
+  border: 1rpx solid #eceeeb;
+  border-radius: 16rpx;
+  padding: 18rpx 24rpx;
+  margin-bottom: 18rpx;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+.custom-row:focus-within { border-color: #ff7e8a; background: #fff; }
+.custom-input {
+  flex: 1;
+  font-size: 28rpx;
+  color: #1d1d1f;
+}
+.custom-unit { font-size: 22rpx; color: #9ca3af; margin-left: 12rpx; }

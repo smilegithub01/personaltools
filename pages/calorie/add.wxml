@@ -16,6 +16,13 @@
         <view class="freq-item" wx:for="{{frequent}}" wx:key="name" data-name="{{item.name}}" bindtap="onFrequent">{{item.name}}</view>
       </view>
     </view>
+    <view class="custom-entry" bindtap="onCustomFood">
+      <view class="custom-entry-main">
+        <text class="custom-entry-text">+ 自定义食物</text>
+        <text class="custom-entry-hint">手动输入名称和热量</text>
+      </view>
+      <text class="custom-entry-arrow">›</text>
+    </view>
     <scroll-view scroll-y class="list">
       <view class="item {{selFood && selFood.name===item.name ? 'on':''}}" wx:for="{{foods}}" wx:key="name" data-name="{{item.name}}" bindtap="onPickFood">
         <view>
@@ -30,13 +37,29 @@
     <!-- 饮食录入面板 -->
     <view class="panel" wx:if="{{selFood}}">
       <view class="panel-head">
-        <view><text class="panel-name">{{selFood.name}}</text><text class="panel-cat">{{selFood.cat}}</text></view>
+        <view wx:if="{{!selFood.custom}}">
+          <text class="panel-name">{{selFood.name}}</text>
+          <text class="panel-cat">{{selFood.cat}}</text>
+        </view>
+        <text class="panel-name" wx:else>自定义食物</text>
         <text class="panel-close" bindtap="onClosePanel">×</text>
       </view>
+
+      <!-- 自定义食物输入 -->
+      <block wx:if="{{selFood.custom}}">
+        <view class="custom-row">
+          <input class="custom-input" placeholder="食物名称，如 自制炒饭" value="{{selFood.name}}" bindinput="onCustomName" maxlength="30" />
+        </view>
+        <view class="custom-row">
+          <input class="custom-input" type="digit" placeholder="热量（每 100g）" value="{{selFood.kcal}}" bindinput="onCustomKcal" />
+          <text class="custom-unit">kcal / 100g</text>
+        </view>
+      </block>
+
       <view class="meal-row">
         <text class="meal-label">餐次</text>
         <view class="meal-seg">
-          <view class="meal-opt {{meal===m?'on':''}}" wx:for="{{meals}}" wx:key="*this" data-m="{{item}}" bindtap="onMeal">{{item}}</view>
+          <view class="meal-opt {{meal===item?'on':''}}" wx:for="{{meals}}" wx:key="*this" data-m="{{item}}" bindtap="onMeal">{{item}}</view>
         </view>
       </view>
       <view class="amount">
