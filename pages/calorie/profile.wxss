@@ -1,0 +1,107 @@
+/* pages/calorie/profile.wxss - 资料页视觉升级 */
+
+.form { margin-bottom: 8rpx; }
+.field {
+  margin-bottom: 28rpx;
+}
+.field-label {
+  font-size: 27rpx;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 12rpx;
+  display: block;
+}
+.field-input {
+  background: #f6f7f5;
+  border: 1rpx solid #eceeeb;
+  border-radius: 16rpx;
+  padding: 22rpx 24rpx;
+  font-size: 28rpx;
+  color: #1d1d1f;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+.field-input:focus {
+  border-color: #ff7e8a;
+  background: #fff;
+}
+
+/* 分段选择器（性别 / 活动水平） */
+.seg {
+  display: flex;
+  background: #f1f3f1;
+  border-radius: 16rpx;
+  padding: 6rpx;
+  gap: 6rpx;
+}
+.seg-item {
+  flex: 1;
+  text-align: center;
+  padding: 18rpx 0;
+  font-size: 27rpx;
+  color: #6b7280;
+  border-radius: 12rpx;
+  transition: all 0.2s ease;
+}
+.seg-item.on {
+  background: #fff;
+  color: #ff7e8a;
+  font-weight: 600;
+  box-shadow: 0 4rpx 12rpx rgba(24, 53, 45, 0.08);
+}
+
+/* 结果卡片 */
+.result {
+  background: linear-gradient(135deg, #fff7f3, #fff);
+  border: 1rpx solid #ffe3d6;
+  border-radius: 24rpx;
+  padding: 32rpx;
+  margin: 8rpx 0 28rpx;
+}
+.result-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 14rpx 0;
+}
+.result-row + .result-row { border-top: 1rpx dashed #f0e0d8; }
+.result-key { font-size: 27rpx; color: #6b7280; }
+.result-val {
+  font-size: 38rpx;
+  font-weight: 700;
+  color: #ff7e8a;
+}
+.result-unit { font-size: 24rpx; font-weight: 500; color: #9ca3af; }
+.result-bmi {
+  margin-top: 18rpx;
+  font-size: 24rpx;
+  color: #6b7280;
+}
+.bmi-tag {
+  font-weight: 600;
+  padding: 4rpx 16rpx;
+  border-radius: 20rpx;
+  margin-left: 8rpx;
+}
+.bmi-tag.bmi-low { background: #e8f1fd; color: #2f80ed; }
+.bmi-tag.bmi-normal { background: #e8f7ee; color: #2fa86a; }
+.bmi-tag.bmi-high { background: #fdf0e3; color: #ef8c2f; }
+.bmi-tag.bmi-obese { background: #fdeceb; color: #e53935; }
+
+/* 底部操作 */
+.privacy-note {
+  margin: 8rpx 8rpx 24rpx;
+  color: #9ca3af;
+  font-size: 21rpx;
+  line-height: 1.65;
+}
+.footer {
+  margin-top: 0;
+}
+
+/* 引导文案 */
+.tip {
+  text-align: center;
+  color: #9ca3af;
+  font-size: 24rpx;
+  margin-top: 24rpx;
+}

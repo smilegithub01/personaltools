@@ -1,0 +1,227 @@
+<!--pages/calorie/calorie.wxml-->
+<view class="container">
+  <!-- 激励 Banner —— 图片全铺 + 文字叠加 -->
+  <view class="fitness-banner anim-in">
+    <image class="fitness-banner-bg" src="{{bannerImg}}" mode="aspectFill"></image>
+    <view class="fitness-banner-overlay"></view>
+    <view class="fitness-banner-copy">
+      <view class="fitness-banner-title">{{bannerTitle}}</view>
+      <view class="fitness-banner-sub">{{bannerSub}}</view>
+    </view>
+  </view>
+
+  <!-- 健康贴士入口（Banner 下方） -->
+  <view class="coach-entry anim-in" style="animation-delay:0.05s" bindtap="goCoach">
+    <view class="ce-icon"><view class="icon icon-target p"></view></view>
+    <view class="ce-text">
+      <view class="ce-title">健康贴士</view>
+      <view class="ce-sub">结合你的剩余热量，获取饮食与运动建议</view>
+    </view>
+    <view class="ce-arrow">›</view>
+  </view>
+
+  <!-- 生长中心：三大留存/裂变功能入口 -->
+  <view class="growth-center">
+    <view class="gc-grid">
+      <view class="gc-card" bindtap="goTree">
+        <text class="gc-icon">🌱</text>
+        <text class="gc-name">我的生长树</text>
+      </view>
+      <view class="gc-card" bindtap="goReport">
+        <text class="gc-icon">📊</text>
+        <text class="gc-name">周报卡片</text>
+      </view>
+      <view class="gc-card" bindtap="goMonthly">
+        <text class="gc-icon">📅</text>
+        <text class="gc-name">月度报告</text>
+      </view>
+      <view class="gc-card" bindtap="goRank">
+        <text class="gc-icon">👥</text>
+        <text class="gc-name">好友生长榜</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 未设置资料 -->
+    <view class="card guide anim-in" wx:if="{{!hasProfile}}">
+      <view class="guide-icon"><view class="icon icon-target p" style="width:72rpx;height:72rpx"></view></view>
+      <view class="guide-title">开启你的减脂计划</view>
+    <view class="guide-sub">先完善身体资料与目标，我们帮你算出专属每日热量额度</view>
+    <button class="btn-primary guide-btn" bindtap="goProfile">开始设置</button>
+  </view>
+
+  <block wx:else>
+    <!-- 计划概览 -->
+    <view class="card anim-in" style="animation-delay:0.05s">
+      <view class="ov-top">
+        <view class="ov-top-item ov-top-item--privacy">
+          <text class="ov-top-val">{{hiddenWeight ? '•••' : ov.currentWeight}} <text class="ov-top-unit">kg</text></text>
+          <text class="ov-top-label">当前体重</text>
+        </view>
+        <view class="ov-top-div"></view>
+        <view class="ov-top-item ov-top-item--privacy" wx:if="{{bmi}}">
+          <text class="ov-top-val bmi-{{bmi.cls}}">{{hiddenWeight ? '•••' : bmi.bmi}}</text>
+          <text class="ov-top-label">BMI · {{hiddenWeight ? '私密' : bmi.level}}</text>
+        </view>
+        <view class="ov-top-item ov-top-item--privacy" wx:else>
+          <text class="ov-top-val">{{hiddenWeight ? '•••' : '—'}}</text>
+          <text class="ov-top-label">BMI</text>
+        </view>
+        <!-- 隐私眼睛：点击切换显示/隐藏体重与 BMI（一套线性图标：睁眼/闭眼） -->
+        <view class="ov-eye" catchtap="toggleWeight" aria-label="切换隐私显示">
+          <view class="icon icon-eye {{hiddenWeight ? 'closed' : ''}}"></view>
+        </view>
+        <view class="ov-top-div"></view>
+        <view class="ov-top-item">
+          <text class="ov-top-val text-accent">{{compliance}}%</text>
+          <text class="ov-top-label">本周达标</text>
+        </view>
+      </view>
+      <view class="metrics">
+        <view class="metric">
+          <view class="metric-val pos">-{{ov.lost}}</view>
+          <view class="metric-label">已减 kg</view>
+        </view>
+        <view class="metric">
+          <view class="metric-val">{{ov.targetWeight}}</view>
+          <view class="metric-label">目标 kg</view>
+        </view>
+        <view class="metric">
+          <view class="metric-val">{{ov.remain}}</view>
+          <view class="metric-label">还需 kg</view>
+        </view>
+        <view class="metric">
+          <view class="metric-val">{{ov.daysToGoal > 0 ? ov.daysToGoal : '达成'}}</view>
+          <view class="metric-label">预计天数</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 今日环形 -->
+    <view class="result-card anim-in" style="animation-delay:0.1s">
+      <view class="result-ring">
+        <svg width="240" height="240" viewBox="0 0 240 240">
+          <circle class="ring-bg" cx="120" cy="120" r="100" fill="none" stroke-width="20"></circle>
+          <circle class="ring-fg" cx="120" cy="120" r="100" fill="none" stroke-width="20"
+            stroke-dasharray="628.3" stroke-dashoffset="{{ringOffset}}"></circle>
+          <text class="ring-center" x="120" y="116">{{ratioPercent}}%</text>
+          <text class="ring-center-sub" x="120" y="144">{{remaining >= 0 ? '已使用' : '已超出'}} {{totalKcal}} kcal</text>
+        </svg>
+      </view>
+      <view class="metrics">
+        <view class="metric">
+          <view class="metric-val">{{target}}</view>
+          <view class="metric-label">目标摄入</view>
+        </view>
+        <view class="metric">
+          <view class="metric-val">{{foodKcal}}</view>
+          <view class="metric-label">已摄入</view>
+        </view>
+        <view class="metric">
+          <view class="metric-val">{{exerciseKcal}}</view>
+          <view class="metric-label">运动消耗</view>
+        </view>
+        <view class="metric">
+          <view class="metric-val" style="color:{{remaining<0?'#e53935':'#2fa86a'}}">{{remaining}}</view>
+          <view class="metric-label">剩余 kcal</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 快捷操作 -->
+    <view class="actions anim-in" style="animation-delay:0.15s">
+      <view class="action-btn tap" data-tab="food" bindtap="goAdd"><view class="icon icon-food p"></view>记饮食</view>
+      <view class="action-btn tap" data-tab="exercise" bindtap="goAdd"><view class="icon icon-ex p"></view>记运动</view>
+      <view class="action-btn ghost tap" bindtap="goWeight"><view class="icon icon-weight m"></view>记体重</view>
+      <view class="action-btn ghost tap" bindtap="goProfile"><view class="icon icon-gear m"></view>资料</view>
+    </view>
+
+    <!-- 今日明细 -->
+    <view class="card detail anim-in" style="animation-delay:0.2s">
+
+      <!-- 三大营养素分析 -->
+      <view class="nutrient-card" wx:if="{{foodKcal>0}}">
+        <view class="sec-title">营养素分析</view>
+        <view class="nutrient-body">
+          <!-- 环形图 -->
+          <view class="nutrient-ring">
+            <svg width="140" height="140" viewBox="0 0 140 140">
+              <circle cx="70" cy="70" r="60" fill="none" stroke="#f0f0f0" stroke-width="14"></circle>
+              <circle cx="70" cy="70" r="60" fill="none" stroke="#4facfe" stroke-width="14"
+                stroke-dasharray="{{carbArc}} 439.8" stroke-dashoffset="0" transform="rotate(-90 70 70)" stroke-linecap="round"></circle>
+              <circle cx="70" cy="70" r="60" fill="none" stroke="#43e97b" stroke-width="14"
+                stroke-dasharray="{{proteinArc}} 439.8" stroke-dashoffset="{{-carbArc}}" transform="rotate(-90 70 70)" stroke-linecap="round"></circle>
+              <circle cx="70" cy="70" r="60" fill="none" stroke="#ff9a9e" stroke-width="14"
+                stroke-dasharray="{{fatArc}} 439.8" stroke-dashoffset="{{-(carbArc + proteinArc)}}" transform="rotate(-90 70 70)" stroke-linecap="round"></circle>
+              <text x="70" y="66" text-anchor="middle" font-size="32" font-weight="700" fill="#333">{{nutrientScore}}</text>
+              <text x="70" y="86" text-anchor="middle" font-size="18" fill="#999">均衡分</text>
+            </svg>
+          </view>
+          <!-- 营养素明细 -->
+          <view class="nutrient-list">
+            <view class="nutrient-row">
+              <view class="nutrient-dot" style="background:#4facfe"></view>
+              <text class="nutrient-name">碳水</text>
+              <text class="nutrient-val">{{nutrientCarb}}g</text>
+              <text class="nutrient-pct">{{nutrientCarbPct}}%</text>
+            </view>
+            <view class="nutrient-row">
+              <view class="nutrient-dot" style="background:#43e97b"></view>
+              <text class="nutrient-name">蛋白质</text>
+              <text class="nutrient-val">{{nutrientProtein}}g</text>
+              <text class="nutrient-pct">{{nutrientProteinPct}}%</text>
+            </view>
+            <view class="nutrient-row">
+              <view class="nutrient-dot" style="background:#ff9a9e"></view>
+              <text class="nutrient-name">脂肪</text>
+              <text class="nutrient-val">{{nutrientFat}}g</text>
+              <text class="nutrient-pct">{{nutrientFatPct}}%</text>
+            </view>
+          </view>
+        </view>
+        <view class="nutrient-hint">参考比例：碳水 50% · 蛋白 20% · 脂肪 30%</view>
+      </view>
+
+      <view class="sec-title">今日明细</view>
+
+      <!-- 饮食推荐 -->
+      <view class="reco" wx:if="{{recommends.length>0}}">
+        <view class="reco-head"><view class="icon icon-target p"></view>还能吃这些（距目标 {{remaining}} kcal）</view>
+        <view class="reco-list">
+          <view class="reco-item" wx:for="{{recommends}}" wx:key="name" data-name="{{item.name}}" bindtap="goAddFood">
+            <view class="reco-main">
+              <text class="reco-name">{{item.name}}</text>
+              <text class="reco-cat">{{item.suggest}}</text>
+            </view>
+            <text class="reco-kcal">{{item.kcal}} kcal/100g</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="empty-tip" wx:if="{{foods.length===0 && exercises.length===0}}">今天还没有记录，点上方按钮开始吧</view>
+
+      <view wx:if="{{foods.length>0}}">
+        <view class="dt-head"><view class="icon icon-list m"></view>饮食（{{foodKcal}} kcal）</view>
+        <view class="dt-row" wx:for="{{foods}}" wx:key="index" wx:for-index="idx" bindlongpress="deleteRecord" data-type="food" data-idx="{{idx}}">
+          <view>
+            <view class="dt-name">{{item.meal}} · {{item.name}}</view>
+            <view class="dt-sub">{{item.grams}} g</view>
+          </view>
+          <text class="dt-kcal">{{item.kcal}} kcal</text>
+        </view>
+      </view>
+
+      <view wx:if="{{exercises.length>0}}" style="margin-top:12rpx">
+        <view class="dt-head"><view class="icon icon-list m"></view>运动（{{exerciseKcal}} kcal）</view>
+        <view class="dt-row" wx:for="{{exercises}}" wx:key="index" wx:for-index="idx" bindlongpress="deleteRecord" data-type="exercise" data-idx="{{idx}}">
+          <view>
+            <view class="dt-name">{{item.name}}</view>
+            <view class="dt-sub">{{item.duration}} 分钟</view>
+          </view>
+          <text class="dt-kcal" style="color:#2fa86a">+{{item.kcal}} kcal</text>
+        </view>
+      </view>
+      <view class="detail-hint" wx:if="{{foods.length>0 || exercises.length>0}}">长按记录可删除</view>
+    </view>
+  </block>
+</view>

@@ -1,0 +1,57 @@
+<!--pages/calorie/weight.wxml-->
+<view class="container">
+  <!-- 今日记录 -->
+  <view class="card input-card anim-in">
+    <view class="sec-title">今日体重（{{today}}）</view>
+    <view class="input-row">
+      <input class="weight-input" type="digit" value="{{weightInput}}" placeholder="0.0" bindinput="onInput" />
+      <text class="input-unit">kg</text>
+      <button class="btn-primary" style="width:180rpx;padding:18rpx 0;margin:0" bindtap="onSave">记录</button>
+    </view>
+  </view>
+
+  <!-- 概览 -->
+  <view class="card overview anim-in" style="animation-delay:0.06s" wx:if="{{ov.currentWeight}}">
+    <view class="ov-head">
+      <view class="ov-current">{{ov.currentWeight}}<text class="ov-unit">kg</text></view>
+      <view class="ov-tag {{ov.trendClass}}">{{ov.trendText}}</view>
+    </view>
+    <view class="bar-wrap">
+      <view class="bar-fill" style="width:{{ov.progressPercent}}%"></view>
+    </view>
+    <view class="bar-scale">
+      <text>起始 {{ov.startWeight}} kg</text>
+      <text>目标 {{ov.targetWeight}} kg</text>
+    </view>
+    <view class="ov-change">
+      已减 <text class="text-pos" style="font-weight:600">-{{ov.lost}}</text> kg ·
+      还需 <text style="font-weight:600">{{ov.remain}}</text> kg
+      <text wx:if="{{ov.daysToGoal>0}}"> · 预计 {{ov.daysToGoal}} 天达成</text>
+      <text wx:else> · 已达成目标</text>
+    </view>
+  </view>
+
+  <!-- 趋势 -->
+  <view class="card trend anim-in" style="animation-delay:0.12s">
+    <view class="sec-title">体重趋势</view>
+    <canvas type="2d" id="trend" class="trend-canvas"></canvas>
+    <view class="empty-tip" wx:if="{{points<2}}">记录至少 2 天体重后，这里会显示趋势曲线</view>
+  </view>
+
+  <!-- 历史 -->
+  <view class="card history anim-in" style="animation-delay:0.18s">
+    <view class="sec-title">历史记录</view>
+    <view class="hist-row" wx:for="{{list}}" wx:key="date">
+      <view class="hist-left">
+        <text class="hist-date">{{item.date}}</text>
+        <text class="hist-dow">{{item.dow}}</text>
+      </view>
+      <view class="hist-right">
+        <text class="hist-val">{{item.weight}} kg</text>
+        <text class="hist-delta {{item.deltaClass}}" wx:if="{{item.deltaText}}">{{item.deltaText}}</text>
+        <text class="hist-del" data-date="{{item.date}}" bindtap="onDelete">删除</text>
+      </view>
+    </view>
+    <view class="empty-tip" wx:if="{{list.length===0}}">还没有记录</view>
+  </view>
+</view>

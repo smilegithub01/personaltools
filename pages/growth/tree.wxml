@@ -1,0 +1,71 @@
+<!-- pages/growth/tree.wxml —— 我的生长树 -->
+<view class="tree-page">
+
+  <!-- 顶部状态条 -->
+  <view class="tree-top">
+    <view class="tree-top-left">
+      <text class="tree-stage-name">{{tree.stageName}}</text>
+      <text class="tree-stage-desc">{{tree.stageDesc}}</text>
+    </view>
+    <view class="tree-top-right" bindtap="goRank">
+      <text class="tree-top-rank">👥 生长榜</text>
+    </view>
+  </view>
+
+  <!-- 树场景 -->
+  <view class="tree-scene">
+    <view class="sky-gradient"></view>
+
+    <!-- 地面 -->
+    <view class="ground"></view>
+
+    <!-- 树本体：用 CSS 绘制，按阶段切换形态 -->
+    <view class="tree {{animateGrow ? 'grow' : ''}} stage-{{tree.stage}}">
+      <!-- 树干 -->
+      <view class="trunk"></view>
+      <!-- 树冠 -->
+      <view class="crown"></view>
+      <!-- 装饰（叶子/果实/花） -->
+      <block wx:for="{{leaves}}" wx:key="index">
+        <view class="deco {{item.isFlower ? 'flower' : 'leaf'}}" style="left:{{item.left}};top:{{item.top}}"></view>
+      </block>
+      <!-- 开花阶段额外带飘落花瓣 -->
+      <view wx:if="{{tree.stage === 4}}" class="petal p1"></view>
+      <view wx:if="{{tree.stage === 4}}" class="petal p2"></view>
+      <view wx:if="{{tree.stage === 4}}" class="petal p3"></view>
+    </view>
+
+    <!-- 阶段进度条 -->
+    <view class="tree-progress">
+      <view class="tree-progress-bar">
+        <view class="tree-progress-fill" style="width:{{tree.progress * 100}}%"></view>
+      </view>
+      <text class="tree-progress-text" wx:if="{{tree.nextStageName}}">再打卡 {{tree.daysToNext}} 天，长成「{{tree.nextStageName}}」</text>
+      <text class="tree-progress-text" wx:else>已达最高形态，继续闪耀🌟</text>
+    </view>
+  </view>
+
+  <!-- 数据卡片 -->
+  <view class="tree-stats">
+    <view class="stat-card">
+      <text class="stat-num">{{tree.streak}}</text>
+      <text class="stat-label">连续打卡(天)</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-num">{{tree.totalDays}}</text>
+      <text class="stat-label">累计打卡(天)</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-num">{{tree.bestStreak}}</text>
+      <text class="stat-label">最长连续(天)</text>
+    </view>
+  </view>
+
+  <!-- 底部行动 -->
+  <view class="tree-actions">
+    <button class="tree-btn primary" bindtap="goCheckin">✅ 今天去打卡</button>
+    <button class="tree-btn ghost" open-type="share">🌿 分享我的树</button>
+  </view>
+
+  <view class="tree-tip">每打卡一天，树就长大一点。坚持是看得见的。</view>
+</view>

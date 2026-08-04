@@ -1,0 +1,80 @@
+<!-- pages/report/weekly.wxml —— 可分享周报卡片 -->
+<view class="report-page">
+
+  <!-- Canvas 卡片（离屏绘制，同时作为预览） -->
+  <view class="card-wrap">
+    <canvas type="2d" id="cardCanvas" class="card-canvas"></canvas>
+  </view>
+
+  <!-- 数据概览 -->
+  <view class="report-summary">
+    <view class="rs-item">
+      <text class="rs-num">{{report.checkinDays}}</text>
+      <text class="rs-label">本周打卡(天)</text>
+    </view>
+    <view class="rs-item">
+      <text class="rs-num">{{report.streak}}</text>
+      <text class="rs-label">连续打卡(天)</text>
+    </view>
+    <view class="rs-item">
+      <text class="rs-num">{{report.totalFood}}</text>
+      <text class="rs-label">摄入(kcal)</text>
+    </view>
+    <view class="rs-item">
+      <text class="rs-num">{{report.totalExercise}}</text>
+      <text class="rs-label">消耗(kcal)</text>
+    </view>
+  </view>
+
+  <!-- 营养素分析卡片（本周平均占比） -->
+  <view class="nutrient-card anim-in" wx:if="{{nutrientCarbPct || nutrientProteinPct || nutrientFatPct}}">
+    <view class="nc-title">营养素平均占比</view>
+    <view class="nutrient-body">
+      <!-- 环形图 -->
+      <view class="nutrient-ring">
+        <svg width="140" height="140" viewBox="0 0 140 140">
+          <circle cx="70" cy="70" r="60" fill="none" stroke="#f0f0f0" stroke-width="14"></circle>
+          <circle cx="70" cy="70" r="60" fill="none" stroke="#4facfe" stroke-width="14"
+            stroke-dasharray="{{carbArc}} 439.8" stroke-dashoffset="0" transform="rotate(-90 70 70)" stroke-linecap="round"></circle>
+          <circle cx="70" cy="70" r="60" fill="none" stroke="#43e97b" stroke-width="14"
+            stroke-dasharray="{{proteinArc}} 439.8" stroke-dashoffset="{{-carbArc}}" transform="rotate(-90 70 70)" stroke-linecap="round"></circle>
+          <circle cx="70" cy="70" r="60" fill="none" stroke="#ff9a9e" stroke-width="14"
+            stroke-dasharray="{{fatArc}} 439.8" stroke-dashoffset="{{-(carbArc + proteinArc)}}" transform="rotate(-90 70 70)" stroke-linecap="round"></circle>
+          <text x="70" y="66" text-anchor="middle" font-size="32" font-weight="700" fill="#18352d">{{nutrientScore}}</text>
+          <text x="70" y="86" text-anchor="middle" font-size="16" fill="#9ca3af">均衡分</text>
+        </svg>
+      </view>
+      <!-- 营养素明细 -->
+      <view class="nutrient-list">
+        <view class="nutrient-row">
+          <view class="nutrient-dot" style="background:#4facfe"></view>
+          <text class="nutrient-name">碳水</text>
+          <text class="nutrient-val">{{nutrientCarb}}g</text>
+          <text class="nutrient-pct">{{nutrientCarbPct}}%</text>
+        </view>
+        <view class="nutrient-row">
+          <view class="nutrient-dot" style="background:#43e97b"></view>
+          <text class="nutrient-name">蛋白质</text>
+          <text class="nutrient-val">{{nutrientProtein}}g</text>
+          <text class="nutrient-pct">{{nutrientProteinPct}}%</text>
+        </view>
+        <view class="nutrient-row">
+          <view class="nutrient-dot" style="background:#ff9a9e"></view>
+          <text class="nutrient-name">脂肪</text>
+          <text class="nutrient-val">{{nutrientFat}}g</text>
+          <text class="nutrient-pct">{{nutrientFatPct}}%</text>
+        </view>
+      </view>
+    </view>
+    <view class="nutrient-hint">参考比例：碳水 50% · 蛋白 20% · 脂肪 30%</view>
+  </view>
+
+  <!-- 操作 -->
+  <view class="report-actions">
+    <button class="r-btn primary" bindtap="saveCard">📥 保存卡片发朋友圈</button>
+    <button class="r-btn ghost" open-type="share">🔗 分享给好友</button>
+  </view>
+
+  <view wx:if="{{savedTip}}" class="report-tip">{{savedTip}}</view>
+  <view wx:else class="report-tip">保存图片到相册，发朋友圈就能带来新用户 🌱</view>
+</view>

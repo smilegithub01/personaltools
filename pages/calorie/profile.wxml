@@ -1,0 +1,81 @@
+<!--pages/calorie/profile.wxml-->
+<view class="container">
+  <view class="card anim-in">
+    <view class="sec-title">身体资料</view>
+    <view class="form">
+      <view class="field">
+        <text class="field-label">性别</text>
+        <view class="seg">
+          <view class="seg-item {{gender==='male'?'on':''}}" data-g="male" bindtap="onGender">男</view>
+          <view class="seg-item {{gender==='female'?'on':''}}" data-g="female" bindtap="onGender">女</view>
+        </view>
+      </view>
+
+      <view class="field">
+        <text class="field-label">年龄</text>
+        <input class="field-input" type="number" placeholder="请输入年龄" value="{{age}}" bindinput="onAge" />
+      </view>
+
+      <view class="field">
+        <text class="field-label">身高</text>
+        <input class="field-input" type="digit" placeholder="请输入身高" value="{{height}}" bindinput="onHeight" />
+      </view>
+
+      <view class="field">
+        <text class="field-label">当前体重</text>
+        <input class="field-input" type="digit" placeholder="请输入当前体重" value="{{weight}}" bindinput="onWeight" />
+      </view>
+
+      <view class="field">
+        <text class="field-label">活动水平</text>
+        <picker range="{{activityLabels}}" value="{{activityIndex}}" bindchange="onActivity">
+          <view class="field-input">{{activityLabels[activityIndex]}}</view>
+        </picker>
+      </view>
+    </view>
+  </view>
+
+  <view class="card anim-in" style="animation-delay:0.06s">
+    <view class="sec-title">减肥目标</view>
+    <view class="form">
+      <view class="field">
+        <text class="field-label">目标体重</text>
+        <input class="field-input" type="digit" placeholder="请输入目标体重" value="{{targetWeight}}" bindinput="onTarget" />
+      </view>
+
+      <view class="field">
+        <view class="rate-head" style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8rpx">
+          <text class="field-label" style="margin-bottom:0">每周减重速度</text>
+          <text style="font-size:28rpx;font-weight:600;color:#ff7e8a">{{weeklyRate}} kg/周</text>
+        </view>
+        <slider min="0.25" max="1" step="0.25" value="{{weeklyRate}}" activeColor="#ff7e8a" block-size="20" bindchange="onRate" bindchanging="onRate" />
+        <text class="text-weak" style="font-size:22rpx">健康建议：0.5 kg/周 左右更可持续（约 3850 kcal/周 缺口）</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="result anim-in" style="animation-delay:0.12s" wx:if="{{bmr}}">
+    <view class="result-row">
+      <text class="result-key">基础代谢 BMR</text>
+      <text class="result-val">{{bmr}} <text class="result-unit">kcal</text></text>
+    </view>
+    <view class="result-row">
+      <text class="result-key">每日总消耗 TDEE</text>
+      <text class="result-val">{{tdee}} <text class="result-unit">kcal</text></text>
+    </view>
+    <view class="result-row">
+      <text class="result-key">每日目标摄入</text>
+      <text class="result-val">{{target}} <text class="result-unit">kcal</text></text>
+    </view>
+    <view class="result-bmi" wx:if="{{bmi}}">
+      当前 BMI <text class="bmi-tag bmi-{{bmi.cls}}">{{bmi.bmi}} · {{bmi.level}}</text>
+    </view>
+    <view class="empty-tip" style="color:#e0892b;padding:12rpx 0 0" wx:if="{{warn}}">{{warn}}</view>
+  </view>
+
+  <view class="privacy-note">
+    身体资料、饮食和体重记录仅保存在当前设备，不会上传服务器；卸载小程序或清理微信数据后可能丢失。热量与体重目标为估算结果，仅供日常健康管理参考，不替代医生或营养师建议。
+  </view>
+
+  <button class="btn-primary footer anim-in" style="animation-delay:0.16s" bindtap="onSave">{{isEdit ? '保存修改' : '保存并开始'}}</button>
+</view>

@@ -1,0 +1,228 @@
+<!--pages/calorie/add.wxml-->
+<view class="container">
+  <!-- 可横滑多 tab：饮食/运动默认显示，饮水/围度/经期左滑出现 -->
+  <scroll-view scroll-x class="tabs-scroll" enhanced show-scrollbar="{{false}}">
+    <view class="tabs">
+      <view class="tab {{tab===item?'on':''}}" wx:for="{{tabs}}" wx:key="*this" data-tab="{{item}}" bindtap="onTab">{{tabLabels[item]}}</view>
+    </view>
+  </scroll-view>
+
+  <!-- 本次已添加计数 + 完成按钮 -->
+  <view class="added-bar {{addedCount>0 ? 'show':''}}">
+    <text class="added-text">本次已添加 {{addedCount}} 项</text>
+    <view class="added-done" bindtap="onDone">完成</view>
+  </view>
+
+  <!-- 饮食 -->
+  <block wx:if="{{tab==='food'}}">
+    <view class="search">
+      <input class="search-input" placeholder="搜索食物，如 米饭 / 鸡胸肉 / 鸡肉" value="{{kw}}" bindinput="onKw" />
+    </view>
+
+    <!-- 复制昨日 -->
+    <view class="copy-yesterday" wx:if="{{yesterdayFoods.length>0}}">
+      <view class="cy-label">📋 复制昨日</view>
+      <view class="cy-row">
+        <view class="cy-chip" data-meal="早餐" bindtap="onCopyYesterday">早餐</view>
+        <view class="cy-chip" data-meal="午餐" bindtap="onCopyYesterday">午餐</view>
+        <view class="cy-chip" data-meal="晚餐" bindtap="onCopyYesterday">晚餐</view>
+        <view class="cy-chip all" data-meal="" bindtap="onCopyYesterday">全部</view>
+      </view>
+    </view>
+
+    <!-- 常吃收藏 -->
+    <view class="freq" wx:if="{{favorList.length>0}}">
+      <view class="freq-label">★ 常吃</view>
+      <view class="freq-list">
+        <view class="freq-item" wx:for="{{favorList}}" wx:key="name" data-name="{{item.name}}" bindtap="onPickFavor">{{item.name}}</view>
+      </view>
+    </view>
+
+    <view class="custom-entry" bindtap="onCustomFood">
+      <view class="custom-entry-main">
+        <text class="custom-entry-text">+ 自定义食物</text>
+        <text class="custom-entry-hint">手动输入名称和热量</text>
+      </view>
+      <text class="custom-entry-arrow">›</text>
+    </view>
+    <scroll-view scroll-y class="list">
+      <view class="item {{selFood && selFood.name===item.name ? 'on':''}}" wx:for="{{foods}}" wx:key="name" data-name="{{item.name}}" bindtap="onPickFood">
+        <view>
+          <view class="item-name">{{item.name}}</view>
+          <view class="item-cat">{{item.cat}} · 碳{{item.carb}} 蛋{{item.protein}} 脂{{item.fat}}</view>
+        </view>
+        <text class="item-kcal">{{item.kcal}}/100g</text>
+      </view>
+      <view class="empty-tip" wx:if="{{foods.length===0}}">没有找到「{{kw}}」</view>
+    </scroll-view>
+
+    <!-- 饮食录入面板 -->
+    <view class="panel" wx:if="{{selFood}}">
+      <view class="panel-head">
+        <view wx:if="{{!selFood.custom}}">
+          <text class="panel-name">{{selFood.name}}</text>
+          <text class="panel-cat">{{selFood.cat}}</text>
+        </view>
+        <text class="panel-name" wx:else>自定义食物</text>
+        <view class="panel-actions">
+          <text class="panel-favor" wx:if="{{!selFood.custom}}" bindtap="onToggleFavor">★</text>
+          <text class="panel-close" bindtap="onClosePanel">×</text>
+        </view>
+      </view>
+
+      <block wx:if="{{selFood.custom}}">
+        <view class="custom-row">
+          <input class="custom-input" placeholder="食物名称，如 自制炒饭" value="{{selFood.name}}" bindinput="onCustomName" maxlength="30" />
+        </view>
+        <view class="custom-row">
+          <input class="custom-input" type="digit" placeholder="热量（每 100g）" value="{{selFood.kcal}}" bindinput="onCustomKcal" />
+          <text class="custom-unit">kcal / 100g</text>
+        </view>
+      </block>
+
+      <view class="meal-row">
+        <text class="meal-label">餐次</text>
+        <view class="meal-seg">
+          <view class="meal-opt {{meal===item?'on':''}}" wx:for="{{meals}}" wx:key="*this" data-m="{{item}}" bindtap="onMeal">{{item}}</view>
+        </view>
+      </view>
+      <view class="amount">
+        <input class="amount-input" type="digit" placeholder="克数" value="{{grams}}" bindinput="onGrams" />
+        <text class="amount-unit">g</text>
+        <text class="amount-kcal" wx:if="{{foodKcal>0}}">≈ {{foodKcal}} kcal</text>
+      </view>
+      <view class="quick" style="display:flex;gap:14rpx;margin-bottom:24rpx">
+        <view class="freq-item" wx:for="{{[50,100,150,200]}}" wx:key="*this" data-g="{{item}}" bindtap="onQuick">{{item}}g</view>
+      </view>
+      <button class="btn-primary" bindtap="onAddFood">添加并继续</button>
+    </view>
+  </block>
+
+  <!-- 运动 -->
+  <block wx:if="{{tab==='exercise'}}">
+    <view class="search">
+      <input class="search-input" placeholder="搜索运动，如 跑步 / 游泳 / run" value="{{ekw}}" bindinput="onEkw" />
+    </view>
+    <scroll-view scroll-y class="list">
+      <view class="item {{selEx && selEx.name===item.name ? 'on':''}}" wx:for="{{exercises}}" wx:key="name" data-name="{{item.name}}" bindtap="onPickEx">
+        <view>
+          <view class="item-name">{{item.name}}</view>
+          <view class="item-cat">MET {{item.met}}</view>
+        </view>
+        <text class="item-kcal">点选</text>
+      </view>
+      <view class="empty-tip" wx:if="{{exercises.length===0}}">没有找到「{{ekw}}」</view>
+    </scroll-view>
+
+    <view class="panel" wx:if="{{selEx}}">
+      <view class="panel-head">
+        <view><text class="panel-name">{{selEx.name}}</text><text class="panel-cat">MET {{selEx.met}} · {{weight}}kg</text></view>
+        <text class="panel-close" bindtap="onClosePanel">×</text>
+      </view>
+      <view class="amount">
+        <input class="amount-input" type="digit" placeholder="时长" value="{{minutes}}" bindinput="onMinutes" />
+        <text class="amount-unit">分钟</text>
+        <text class="amount-kcal" wx:if="{{exKcal>0}}">≈ {{exKcal}} kcal</text>
+      </view>
+      <button class="btn-primary" bindtap="onAddEx">添加并继续</button>
+    </view>
+  </block>
+
+  <!-- 饮水 -->
+  <block wx:if="{{tab==='water'}}">
+    <view class="ext-card">
+      <view class="ext-title">今日饮水</view>
+      <view class="water-display">
+        <text class="water-num">{{waterToday}}</text>
+        <text class="water-unit">ml</text>
+        <text class="water-goal">/ {{waterGoal}} ml</text>
+      </view>
+      <view class="water-progress">
+        <view class="water-progress-fill" style="width:{{waterGoal ? (waterToday / waterGoal * 100) : 0}}%"></view>
+      </view>
+      <view class="water-actions">
+        <view class="water-btn" data-ml="100" bindtap="onAddWater">+100ml</view>
+        <view class="water-btn" data-ml="200" bindtap="onAddWater">+200ml</view>
+        <view class="water-btn" data-ml="300" bindtap="onAddWater">+300ml</view>
+        <view class="water-btn" data-ml="500" bindtap="onAddWater">+500ml</view>
+      </view>
+      <view class="water-sub-row">
+        <view class="water-sub-btn" bindtap="onSubWater">-200ml</view>
+        <view class="water-sub-btn" bindtap="onClearWater">清零</view>
+      </view>
+      <view class="ext-hint">建议每日饮水 1500-2000ml，少量多次更健康</view>
+    </view>
+  </block>
+
+  <!-- 围度 -->
+  <block wx:if="{{tab==='measure'}}">
+    <view class="ext-card">
+      <view class="ext-title">身体围度（今日）</view>
+      <view class="measure-form">
+        <view class="measure-row">
+          <text class="measure-label">腰围</text>
+          <input class="measure-input" type="digit" placeholder="0.0" value="{{measure.waist}}" data-field="waist" bindinput="onMeasureInput" />
+          <text class="measure-unit">cm</text>
+        </view>
+        <view class="measure-row">
+          <text class="measure-label">臀围</text>
+          <input class="measure-input" type="digit" placeholder="0.0" value="{{measure.hip}}" data-field="hip" bindinput="onMeasureInput" />
+          <text class="measure-unit">cm</text>
+        </view>
+        <view class="measure-row">
+          <text class="measure-label">大腿围</text>
+          <input class="measure-input" type="digit" placeholder="0.0" value="{{measure.thigh}}" data-field="thigh" bindinput="onMeasureInput" />
+          <text class="measure-unit">cm</text>
+        </view>
+        <view class="measure-row">
+          <text class="measure-label">上臂围</text>
+          <input class="measure-input" type="digit" placeholder="0.0" value="{{measure.arm}}" data-field="arm" bindinput="onMeasureInput" />
+          <text class="measure-unit">cm</text>
+        </view>
+      </view>
+      <button class="btn-primary" bindtap="onSaveMeasure">保存围度</button>
+      <view class="ext-hint">减肥期体重可能不动，但围度在降，记录围度避免误判</view>
+    </view>
+  </block>
+
+  <!-- 经期（仅女性） -->
+  <block wx:if="{{tab==='period'}}">
+    <view class="ext-card">
+      <view class="ext-title">经期记录</view>
+
+      <!-- 今日状态 -->
+      <view class="period-status {{isPeriodToday ? 'on' : ''}}">
+        <text class="period-status-text">{{isPeriodToday ? '🩸 今日经期中' : '今日非经期'}}</text>
+      </view>
+
+      <!-- 记录经期开始 -->
+      <button class="btn-primary" bindtap="onPeriodStart">{{isPeriodToday ? '更新开始日为今天' : '记录今天为经期开始'}}</button>
+
+      <!-- 周期设置 -->
+      <view class="period-settings">
+        <view class="measure-row">
+          <text class="measure-label">周期长度</text>
+          <input class="measure-input" type="number" value="{{period.cycleLen}}" bindinput="onCycleInput" />
+          <text class="measure-unit">天</text>
+        </view>
+        <view class="measure-row">
+          <text class="measure-label">经期天数</text>
+          <input class="measure-input" type="number" value="{{period.periodLen}}" bindinput="onPeriodLenInput" />
+          <text class="measure-unit">天</text>
+        </view>
+      </view>
+
+      <!-- 预测下次 -->
+      <view class="period-next" wx:if="{{nextPeriod}}">
+        <text class="period-next-label">预测下次经期</text>
+        <text class="period-next-date">{{nextPeriod}}</text>
+      </view>
+      <view class="period-next" wx:if="{{period.lastStart}}">
+        <text class="period-next-label">上次开始</text>
+        <text class="period-next-date">{{period.lastStart}}</text>
+      </view>
+
+      <view class="ext-hint">经期前后体重可能波动 1-2kg，属正常现象，不必焦虑</view>
+    </view>
+  </block>
+</view>

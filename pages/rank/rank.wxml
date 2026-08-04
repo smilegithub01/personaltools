@@ -1,0 +1,54 @@
+<!-- pages/rank/rank.wxml —— 好友生长榜 -->
+<view class="rank-page">
+
+  <!-- 我的战绩卡片 -->
+  <view class="my-card">
+    <view class="my-avatar">
+      <!-- 微信开放数据：真实头像（用户点击后展示） -->
+      <open-data type="userAvatarUrl" class="my-avatar-img"></open-data>
+    </view>
+    <view class="my-info">
+      <view class="my-name-row">
+        <open-data type="userNickName" class="my-name"></open-data>
+        <text class="my-rank-badge">第 {{myRank}} 名</text>
+      </view>
+      <text class="my-sub">连续打卡 {{myStreak}} 天 · 累计 {{myDays}} 天 · 最长 {{myBest}} 天</text>
+    </view>
+  </view>
+
+  <!-- 榜单列表 -->
+  <view class="rank-list">
+    <view
+      wx:for="{{list}}"
+      wx:key="id"
+      class="rank-item {{item.isMe ? 'is-me' : ''}}">
+      <!-- 名次 -->
+      <view class="rank-no rank-no-{{item.rank <= 3 ? item.rank : 'n'}}">
+        <text wx:if="{{item.rank <= 3}}">{{item.rank}}</text>
+        <text wx:else>{{item.rank}}</text>
+      </view>
+      <!-- 头像（好友用 emoji 占位；自己用开放数据） -->
+      <view class="rank-avatar">
+        <open-data wx:if="{{item.isMe}}" type="userAvatarUrl" class="rank-avatar-img"></open-data>
+        <text wx:else class="rank-avatar-emoji">{{item.avatar}}</text>
+      </view>
+      <!-- 名字 + 数据 -->
+      <view class="rank-mid">
+        <text class="rank-name">{{item.name}}</text>
+        <text class="rank-desc">累计 {{item.days}} 天</text>
+      </view>
+      <!-- 连续打卡 -->
+      <view class="rank-streak">
+        <text class="rank-streak-num">{{item.streak}}</text>
+        <text class="rank-streak-unit">天</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 邀请裂变 -->
+  <view class="rank-actions">
+    <button class="rank-btn" open-type="share" bindtap="invite">➕ 邀请好友一起生长</button>
+  </view>
+
+  <view class="rank-tip">坚持打卡，就能超越更多好友 🌿</view>
+</view>

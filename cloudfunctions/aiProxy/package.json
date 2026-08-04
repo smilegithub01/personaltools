@@ -1,0 +1,7 @@
+{
+  "name": "aiProxy",
+  "version": "1.0.0",
+  "description": "智能生长 - AI 对话教练代理（安全调用 NVIDIA NIM）",
+  "main": "index.js",
+  "dependencies": {}
+}

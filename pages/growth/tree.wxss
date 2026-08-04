@@ -1,0 +1,228 @@
+/* pages/growth/tree.wxss —— 我的生长树 */
+.tree-page {
+  min-height: 100vh;
+  background: #f6f7f5;
+  padding-bottom: 40rpx;
+  box-sizing: border-box;
+}
+
+/* 顶部状态 */
+.tree-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28rpx 32rpx 8rpx;
+}
+.tree-top-left { display: flex; flex-direction: column; }
+.tree-stage-name {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #18352d;
+}
+.tree-stage-desc {
+  font-size: 24rpx;
+  color: #6b7d75;
+  margin-top: 6rpx;
+}
+.tree-top-rank {
+  font-size: 26rpx;
+  color: #2f7d5b;
+  background: #e6f4ec;
+  padding: 12rpx 22rpx;
+  border-radius: 999rpx;
+}
+
+/* 树场景 */
+.tree-scene {
+  position: relative;
+  height: 620rpx;
+  margin: 16rpx 24rpx;
+  border-radius: 32rpx;
+  overflow: hidden;
+  background: #d9efe0;
+}
+.sky-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, #bfe6ff 0%, #d9efe0 60%, #cdebcf 100%);
+}
+.ground {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 180rpx;
+  background: linear-gradient(180deg, #a7d8a0 0%, #8cc488 100%);
+  border-radius: 50% 50% 0 0 / 40rpx 40rpx 0 0;
+}
+
+/* 树本体容器（anchor 在地面中央） */
+.tree {
+  position: absolute;
+  left: 50%;
+  bottom: 150rpx;
+  width: 320rpx;
+  height: 400rpx;
+  transform: translateX(-50%);
+  transform-origin: bottom center;
+}
+.tree.grow { animation: growPop .9s cubic-bezier(.34,1.56,.64,1); }
+@keyframes growPop {
+  0% { transform: translateX(-50%) scale(.2); opacity: .2; }
+  60% { transform: translateX(-50%) scale(1.06); opacity: 1; }
+  100% { transform: translateX(-50%) scale(1); }
+}
+
+/* 树干 */
+.trunk {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 36rpx;
+  height: 120rpx;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, #8a5a3b, #a86b44);
+  border-radius: 16rpx 16rpx 8rpx 8rpx;
+}
+/* 树冠 */
+.crown {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 200rpx;
+  height: 200rpx;
+  transform: translateX(-50%);
+  background: radial-gradient(circle at 50% 40%, #7cc47f, #4ea15a 70%, #3c8a48);
+  border-radius: 50%;
+  box-shadow: 0 8rpx 20rpx rgba(60,138,72,.25);
+}
+.deco {
+  position: absolute;
+  width: 22rpx;
+  height: 22rpx;
+  border-radius: 50% 0 50% 50%;
+  background: #9ad79d;
+  transform: rotate(45deg);
+}
+.deco.flower {
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffd1e8 40%, #ff8fc0 100%);
+  box-shadow: 0 0 6rpx rgba(255,143,192,.6);
+}
+
+/* 阶段差异 */
+/* 阶段0：种子 —— 只显示土里的小芽点 */
+.tree.stage-0 .trunk { height: 30rpx; width: 18rpx; }
+.tree.stage-0 .crown { width: 60rpx; height: 60rpx; top: 18rpx; background: radial-gradient(circle,#a6e3a9,#7cc47f); }
+/* 阶段1：幼苗 */
+.tree.stage-1 .trunk { height: 70rpx; width: 24rpx; }
+.tree.stage-1 .crown { width: 120rpx; height: 120rpx; top: 14rpx; }
+/* 阶段2：小树 */
+.tree.stage-2 .trunk { height: 110rpx; }
+.tree.stage-2 .crown { width: 170rpx; height: 170rpx; }
+/* 阶段3：大树（更大更密） */
+.tree.stage-3 .trunk { height: 150rpx; width: 44rpx; }
+.tree.stage-3 .crown { width: 240rpx; height: 240rpx; }
+/* 阶段4：开花（粉色点缀 + 飘落花瓣） */
+.tree.stage-4 .trunk { height: 170rpx; width: 48rpx; }
+.tree.stage-4 .crown { width: 260rpx; height: 260rpx; background: radial-gradient(circle at 50% 40%, #8fd495, #4ea15a 65%, #3c8a48); }
+
+/* 飘落花瓣 */
+.petal {
+  position: absolute;
+  width: 18rpx; height: 18rpx;
+  background: #ffb3d9;
+  border-radius: 50% 0 50% 50%;
+  transform: rotate(45deg);
+  opacity: .9;
+  animation: fall 3.6s linear infinite;
+}
+.petal.p1 { left: 40%; top: 120rpx; animation-delay: 0s; }
+.petal.p2 { left: 52%; top: 140rpx; animation-delay: 1.2s; }
+.petal.p3 { left: 46%; top: 130rpx; animation-delay: 2.4s; }
+@keyframes fall {
+  0% { transform: translateY(0) rotate(45deg); opacity: .9; }
+  100% { transform: translateY(260rpx) rotate(225deg); opacity: 0; }
+}
+
+/* 进度 */
+.tree-progress {
+  position: absolute;
+  left: 32rpx; right: 32rpx; bottom: 24rpx;
+  z-index: 2;
+}
+.tree-progress-bar {
+  height: 16rpx;
+  background: rgba(255,255,255,.6);
+  border-radius: 999rpx;
+  overflow: hidden;
+}
+.tree-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4ea15a, #7cc47f);
+  border-radius: 999rpx;
+  transition: width .8s ease;
+}
+.tree-progress-text {
+  display: block;
+  margin-top: 10rpx;
+  font-size: 22rpx;
+  color: #2f5a46;
+  text-align: center;
+}
+
+/* 数据卡片 */
+.tree-stats {
+  display: flex;
+  gap: 18rpx;
+  padding: 0 24rpx;
+  margin-top: 24rpx;
+}
+.stat-card {
+  flex: 1;
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 28rpx 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 6rpx 18rpx rgba(0,0,0,.04);
+}
+.stat-num {
+  font-size: 44rpx;
+  font-weight: 700;
+  color: #18352d;
+}
+.stat-label {
+  font-size: 22rpx;
+  color: #8a988f;
+  margin-top: 6rpx;
+}
+
+/* 行动 */
+.tree-actions {
+  display: flex;
+  gap: 18rpx;
+  padding: 28rpx 24rpx 8rpx;
+}
+.tree-btn {
+  flex: 1;
+  border-radius: 999rpx;
+  font-size: 28rpx;
+  padding: 22rpx 0;
+  line-height: 1.4;
+}
+.tree-btn.primary {
+  background: linear-gradient(90deg, #2f7d5b, #4ea15a);
+  color: #fff;
+  border: none;
+}
+.tree-btn.ghost {
+  background: #fff;
+  color: #2f7d5b;
+  border: 2rpx solid #bfe0cc;
+}
+.tree-tip {
+  text-align: center;
+  font-size: 22rpx;
+  color: #9aa89f;
+  margin-top: 18rpx;
+}

@@ -1,0 +1,136 @@
+/* pages/report/weekly.wxss —— 可分享周报卡片 */
+.report-page {
+  min-height: 100vh;
+  background: #f6f7f5;
+  padding: 32rpx 24rpx 60rpx;
+  box-sizing: border-box;
+}
+
+.card-wrap {
+  display: flex;
+  justify-content: center;
+}
+.card-canvas {
+  width: 600rpx;   /* 2x 的 300px */
+  height: 920rpx;  /* 2x 的 460px */
+  border-radius: 20rpx;
+  box-shadow: 0 12rpx 32rpx rgba(0,0,0,.12);
+}
+
+.report-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  margin-top: 28rpx;
+}
+.rs-item {
+  width: calc(50% - 8rpx);
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 26rpx 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 6rpx 18rpx rgba(0,0,0,.04);
+}
+.rs-num {
+  font-size: 42rpx;
+  font-weight: 700;
+  color: #18352d;
+}
+.rs-label {
+  font-size: 22rpx;
+  color: #8a988f;
+  margin-top: 6rpx;
+}
+
+.report-actions {
+  display: flex;
+  gap: 18rpx;
+  margin-top: 28rpx;
+}
+.r-btn {
+  flex: 1;
+  border-radius: 999rpx;
+  font-size: 28rpx;
+  padding: 22rpx 0;
+  line-height: 1.4;
+}
+.r-btn.primary {
+  background: linear-gradient(90deg, #2f7d5b, #4ea15a);
+  color: #fff;
+  border: none;
+}
+.r-btn.ghost {
+  background: #fff;
+  color: #2f7d5b;
+  border: 2rpx solid #bfe0cc;
+}
+.report-tip {
+  text-align: center;
+  font-size: 22rpx;
+  color: #9aa89f;
+  margin-top: 20rpx;
+}
+
+/* ===== 营养素分析卡片 ===== */
+.nutrient-card {
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 28rpx 30rpx;
+  margin-top: 24rpx;
+  box-shadow: 0 4rpx 16rpx rgba(24,53,45,0.06);
+}
+.nc-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #18352d;
+  margin-bottom: 22rpx;
+}
+.nutrient-body {
+  display: flex;
+  align-items: center;
+}
+.nutrient-ring {
+  flex-shrink: 0;
+  margin-right: 24rpx;
+}
+.nutrient-list {
+  flex: 1;
+}
+.nutrient-row {
+  display: flex;
+  align-items: center;
+  padding: 10rpx 0;
+}
+.nutrient-dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  margin-right: 14rpx;
+  flex-shrink: 0;
+}
+.nutrient-name {
+  font-size: 26rpx;
+  color: #4b5563;
+  width: 100rpx;
+}
+.nutrient-val {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #1d1d1f;
+  flex: 1;
+  text-align: right;
+}
+.nutrient-pct {
+  font-size: 24rpx;
+  color: #9ca3af;
+  width: 70rpx;
+  text-align: right;
+}
+.nutrient-hint {
+  font-size: 22rpx;
+  color: #9ca3af;
+  margin-top: 18rpx;
+  text-align: center;
+}
