@@ -1,80 +1,134 @@
-<!--pages/coach/coach.wxml —— 健康贴士-->
+<!--pages/coach/coach.wxml —— 双模式：本地贴士 / AI 对话（后台开关控制）-->
 <view class="container">
 
-  <!-- 顶部概览卡 -->
-  <view class="hero-card">
-    <view class="hero-top">
-      <view class="hero-title">健康贴士</view>
-      <view class="hero-goal">{{goalText}}</view>
+  <!-- 加载中（读取云端开关） -->
+  <view class="loading-screen" wx:if="{{!configLoaded}}">
+    <view class="loading-dot"></view>
+    <text class="loading-text">加载中…</text>
+  </view>
+
+  <!-- AI 对话模式（后台开关开启） -->
+  <view class="chat" wx:elif="{{aiEnabled}}">
+    <!-- 顶部栏 -->
+    <view class="chat-header">
+      <view class="chat-title">AI 健康教练</view>
+      <view class="chat-clear" bindtap="clearHistory">清空</view>
     </view>
-    <view class="hero-metrics" wx:if="{{today}}">
-      <view class="hero-metric">
-        <text class="hero-val {{today.remaining<0?'neg':'pos'}}">{{today.remaining >= 0 ? today.remaining : 0}}</text>
-        <text class="hero-lab">剩余 kcal</text>
+
+    <!-- 消息列表 -->
+    <scroll-view class="msg-list" scroll-y scroll-top="{{scrollTop}}" scroll-with-animation>
+      <view wx:for="{{messages}}" wx:key="index" class="row {{item.role}}">
+        <view class="avatar {{item.role}}">{{item.role === 'user' ? '我' : 'AI'}}</view>
+        <view class="bubble {{item.role}}">{{item.content}}</view>
       </view>
-      <view class="hero-metric">
-        <text class="hero-val">{{today.foodKcal}}</text>
-        <text class="hero-lab">已摄入</text>
+      <view wx:if="{{loading}}" class="row assistant">
+        <view class="avatar assistant">AI</view>
+        <view class="bubble assistant loading">正在思考…</view>
       </view>
-      <view class="hero-metric">
-        <text class="hero-val">{{streak}}</text>
-        <text class="hero-lab">连续打卡</text>
+    </scroll-view>
+
+    <!-- 快捷提问 -->
+    <view class="quick" wx:if="{{messages.length <= 1}}">
+      <view class="quick-hint">试试这样问教练 👇</view>
+      <view class="quick-row">
+        <view class="chip" bindtap="quickAsk" data-q="我今天吃了麻辣烫，还剩多少额度？">🍜 吃了麻辣烫</view>
+        <view class="chip" bindtap="quickAsk" data-q="晚上还能吃点什么？">🌙 晚上吃啥</view>
+        <view class="chip" bindtap="quickAsk" data-q="为什么今天剩余这么少？">❓ 为啥剩这么少</view>
       </view>
+    </view>
+
+    <!-- 今日额度 -->
+    <view class="quota">
+      <view class="quota-bar">
+        <view class="quota-fill" style="width: {{quotaLimit ? (quotaUsed / quotaLimit * 100) : 0}}%;"></view>
+      </view>
+      <view class="quota-text">今日提问 {{quotaUsed}}/{{quotaLimit}}</view>
+    </view>
+
+    <!-- 输入栏 -->
+    <view class="input-bar">
+      <input class="chat-input" value="{{input}}" placeholder="跟教练说点什么…" confirm-type="send"
+             bindinput="onInput" bindconfirm="send" />
+      <view class="send-btn {{loading ? 'disabled' : ''}}" bindtap="send">发送</view>
     </view>
   </view>
 
-  <!-- 每周计划 -->
-  <view class="plan-card" wx:if="{{weeklyPlan && weeklyPlan.days > 0}}">
-    <view class="plan-row">
-      <view class="plan-item">
-        <text class="plan-val">{{weeklyPlan.rate}}</text>
-        <text class="plan-lab">kg/周</text>
-      </view>
-      <view class="plan-divider"></view>
-      <view class="plan-item">
-        <text class="plan-val">{{weeklyPlan.remain}}</text>
-        <text class="plan-lab">需减 kg</text>
-      </view>
-      <view class="plan-divider"></view>
-      <view class="plan-item">
-        <text class="plan-val">{{weeklyPlan.days}}</text>
-        <text class="plan-lab">预计天数</text>
-      </view>
-    </view>
-  </view>
+  <!-- 本地贴士模式（默认，过审安全） -->
+  <block wx:else>
 
-  <!-- 快捷操作 -->
-  <view class="quick-actions">
-    <view class="qa-btn" bindtap="goAdd">
-      <view class="qa-icon">🍽️</view>
-      <view class="qa-text">记饮食</view>
-    </view>
-    <view class="qa-btn" bindtap="goWeight">
-      <view class="qa-icon">⚖️</view>
-      <view class="qa-text">记体重</view>
-    </view>
-    <view class="qa-btn" bindtap="goReport">
-      <view class="qa-icon">📊</view>
-      <view class="qa-text">看周报</view>
-    </view>
-  </view>
-
-  <!-- 贴士卡片列表 -->
-  <view class="tips-section">
-    <view class="section-title">为你准备的贴士</view>
-
-    <view class="tip-card anim-in" wx:for="{{tips}}" wx:key="title">
-      <view class="tip-head">
-        <view class="tip-icon">{{item.icon}}</view>
-        <view class="tip-body">
-          <view class="tip-title">{{item.title}}</view>
-          <view class="tip-tag">{{item.tag}}</view>
+    <!-- 顶部概览卡 -->
+    <view class="hero-card">
+      <view class="hero-top">
+        <view class="hero-title">健康贴士</view>
+        <view class="hero-goal">{{goalText}}</view>
+      </view>
+      <view class="hero-metrics" wx:if="{{today}}">
+        <view class="hero-metric">
+          <text class="hero-val {{today.remaining<0?'neg':'pos'}}">{{today.remaining >= 0 ? today.remaining : 0}}</text>
+          <text class="hero-lab">剩余 kcal</text>
+        </view>
+        <view class="hero-metric">
+          <text class="hero-val">{{today.foodKcal}}</text>
+          <text class="hero-lab">已摄入</text>
+        </view>
+        <view class="hero-metric">
+          <text class="hero-val">{{streak}}</text>
+          <text class="hero-lab">连续打卡</text>
         </view>
       </view>
-      <view class="tip-content">{{item.content}}</view>
     </view>
 
-    <view class="empty-tip" wx:if="{{tips.length===0}}">完成饮食记录后，将为你生成个性化贴士 🌱</view>
-  </view>
+    <!-- 每周计划 -->
+    <view class="plan-card" wx:if="{{weeklyPlan && weeklyPlan.days > 0}}">
+      <view class="plan-row">
+        <view class="plan-item">
+          <text class="plan-val">{{weeklyPlan.rate}}</text>
+          <text class="plan-lab">kg/周</text>
+        </view>
+        <view class="plan-divider"></view>
+        <view class="plan-item">
+          <text class="plan-val">{{weeklyPlan.remain}}</text>
+          <text class="plan-lab">需减 kg</text>
+        </view>
+        <view class="plan-divider"></view>
+        <view class="plan-item">
+          <text class="plan-val">{{weeklyPlan.days}}</text>
+          <text class="plan-lab">预计天数</text>
+        </view>
+      </view>
+    </view>
 
+    <!-- 快捷操作 -->
+    <view class="quick-actions">
+      <view class="qa-btn" bindtap="goAdd">
+        <view class="qa-icon">🍽️</view>
+        <view class="qa-text">记饮食</view>
+      </view>
+      <view class="qa-btn" bindtap="goWeight">
+        <view class="qa-icon">⚖️</view>
+        <view class="qa-text">记体重</view>
+      </view>
+      <view class="qa-btn" bindtap="goReport">
+        <view class="qa-icon">📊</view>
+        <view class="qa-text">看周报</view>
+      </view>
+    </view>
+
+    <!-- 贴士卡片列表 -->
+    <view class="tips-section">
+      <view class="section-title">为你准备的贴士</view>
+      <view class="tip-card anim-in" wx:for="{{tips}}" wx:key="title">
+        <view class="tip-head">
+          <view class="tip-icon">{{item.icon}}</view>
+          <view class="tip-body">
+            <view class="tip-title">{{item.title}}</view>
+            <view class="tip-tag">{{item.tag}}</view>
+          </view>
+        </view>
+        <view class="tip-content">{{item.content}}</view>
+      </view>
+      <view class="empty-tip" wx:if="{{tips.length===0}}">完成饮食记录后，将为你生成个性化贴士 🌱</view>
+    </view>
+
+  </block>
 </view>
