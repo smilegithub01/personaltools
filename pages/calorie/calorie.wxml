@@ -10,12 +10,12 @@
     </view>
   </view>
 
-  <!-- AI 健康教练入口（Banner 下方） -->
+  <!-- 健康贴士入口（Banner 下方） -->
   <view class="coach-entry anim-in" style="animation-delay:0.05s" bindtap="goCoach">
-    <view class="ce-icon"><view class="icon icon-ai p"></view></view>
+    <view class="ce-icon"><view class="icon icon-target p"></view></view>
     <view class="ce-text">
-      <view class="ce-title">AI 健康教练</view>
-      <view class="ce-sub">结合你的剩余热量，随时问、随时答</view>
+      <view class="ce-title">健康贴士</view>
+      <view class="ce-sub">结合你的剩余热量，获取饮食与运动建议</view>
     </view>
     <view class="ce-arrow">›</view>
   </view>
@@ -141,9 +141,9 @@
     <view class="card detail anim-in" style="animation-delay:0.2s">
       <view class="sec-title">今日明细</view>
 
-      <!-- AI 饮食推荐 -->
+      <!-- 饮食推荐 -->
       <view class="reco" wx:if="{{recommends.length>0}}">
-        <view class="reco-head"><view class="icon icon-ai p"></view>还能吃这些（距目标 {{remaining}} kcal）</view>
+        <view class="reco-head"><view class="icon icon-target p"></view>还能吃这些（距目标 {{remaining}} kcal）</view>
         <view class="reco-list">
           <view class="reco-item" wx:for="{{recommends}}" wx:key="name" data-name="{{item.name}}" bindtap="goAddFood">
             <view class="reco-main">

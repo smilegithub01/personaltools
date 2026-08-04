@@ -1,7 +1,6 @@
 // app.js
 App({
   onLaunch() {
-    // 展示本地存储能力（测试号 touristappid 下个别 jsapi 可能受限，做容错避免启动崩溃）
     try {
       const logs = wx.getStorageSync('logs') || []
       logs.unshift(Date.now())
@@ -9,18 +8,7 @@ App({
     } catch (e) {
       // ignore
     }
-
-    // 初始化云开发（未开通云开发时静默失败，不影响其他页面）
-    if (wx.cloud) {
-      try {
-        wx.cloud.init({
-          traceUser: true,
-          env: undefined
-        })
-      } catch (e) {
-        console.warn('云环境初始化失败（可能未开通云开发）：', e)
-      }
-    }
+    // 云开发已移除（个人主体审核限制），本地功能正常运行
   },
 
   globalData: {

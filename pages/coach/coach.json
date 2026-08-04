@@ -1,5 +1,5 @@
 {
-  "navigationBarTitleText": "AI 健康教练",
+  "navigationBarTitleText": "健康贴士",
   "usingComponents": {},
-  "enablePullDownRefresh": false
+  "enablePullDownRefresh": true
 }
