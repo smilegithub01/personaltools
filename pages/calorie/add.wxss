@@ -30,6 +30,40 @@
   box-shadow: 0 6rpx 16rpx rgba(255, 126, 138, 0.3);
 }
 
+/* 本次已添加计数条：默认低对比占位，有项后高亮 + 完成按钮 */
+.added-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14rpx 24rpx;
+  margin-bottom: 18rpx;
+  border-radius: 14rpx;
+  background: #f1f3f1;
+  color: #9ca3af;
+  font-size: 25rpx;
+  transition: all 0.25s ease;
+}
+.added-bar.show {
+  background: #fff3ec;
+  color: #ff7e8a;
+  font-weight: 600;
+  box-shadow: 0 4rpx 14rpx rgba(255, 126, 138, 0.15);
+}
+.added-text { font-size: 25rpx; }
+.added-done {
+  padding: 8rpx 28rpx;
+  background: #ff7e8a;
+  color: #fff;
+  border-radius: 24rpx;
+  font-size: 25rpx;
+  font-weight: 600;
+}
+.added-bar:not(.show) .added-done {
+  background: #d1d5db;
+  color: #fff;
+}
+.added-done:active { transform: scale(0.95); }
+
 /* 搜索框 */
 .search {
   padding: 0;

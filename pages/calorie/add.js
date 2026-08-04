@@ -19,7 +19,10 @@ Page({
     selEx: null,
     minutes: '',
     exKcal: 0,
-    weight: 60
+    weight: 60,
+
+    // 本次会话已添加项（支持一餐多种食物/运动连续录入，确认后才返回）
+    addedCount: 0
   },
 
   onLoad(options) {
@@ -123,8 +126,15 @@ Page({
     const day = cal.getDayLog(today)
     day.foods.push({ name: String(name).slice(0, 30), kcal, grams: g, meal })
     if (!cal.saveDayLog(today, day)) return
-    wx.showToast({ title: `已记录 ${kcal} kcal`, icon: 'success' })
-    setTimeout(() => wx.navigateBack(), 500)
+    // 添加成功后不返回，清空面板，支持继续录入下一项
+    const count = this.data.addedCount + 1
+    this.setData({
+      addedCount: count,
+      selFood: null,
+      grams: '',
+      foodKcal: 0
+    })
+    wx.showToast({ title: `已添加 ${kcal} kcal (${count})`, icon: 'success' })
   },
 
   // ---- 运动 ----
@@ -183,7 +193,24 @@ Page({
     const day = cal.getDayLog(today)
     day.exercises.push({ name: selEx.name.slice(0, 30), kcal, duration: m })
     if (!cal.saveDayLog(today, day)) return
-    wx.showToast({ title: `已记录 ${kcal} kcal`, icon: 'success' })
-    setTimeout(() => wx.navigateBack(), 500)
+    // 添加成功后不返回，清空面板，支持继续录入下一项
+    const count = this.data.addedCount + 1
+    this.setData({
+      addedCount: count,
+      selEx: null,
+      minutes: '',
+      exKcal: 0
+    })
+    wx.showToast({ title: `已添加 ${kcal} kcal (${count})`, icon: 'success' })
+  },
+
+  // 完成录入：返回上一页
+  onDone() {
+    if (this.data.addedCount > 0) {
+      wx.showToast({ title: `本次共记录 ${this.data.addedCount} 项`, icon: 'success' })
+      setTimeout(() => wx.navigateBack(), 400)
+    } else {
+      wx.navigateBack()
+    }
   }
 })

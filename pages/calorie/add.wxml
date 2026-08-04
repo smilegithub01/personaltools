@@ -5,6 +5,12 @@
     <view class="tab {{tab==='exercise'?'on':''}}" data-tab="exercise" bindtap="onTab"><view class="icon icon-ex {{tab==='exercise'?'p':'m'}}"></view>记运动</view>
   </view>
 
+  <!-- 本次已添加计数 + 完成按钮（支持连续录入多项后再返回） -->
+  <view class="added-bar {{addedCount>0 ? 'show':''}}">
+    <text class="added-text">本次已添加 {{addedCount}} 项</text>
+    <view class="added-done" bindtap="onDone">完成</view>
+  </view>
+
   <!-- 饮食 -->
   <block wx:if="{{tab==='food'}}">
     <view class="search">
@@ -70,7 +76,7 @@
       <view class="quick" style="display:flex;gap:14rpx;margin-bottom:24rpx">
         <view class="freq-item" wx:for="{{[50,100,150,200]}}" wx:key="*this" data-g="{{item}}" bindtap="onQuick">{{item}}g</view>
       </view>
-      <button class="btn-primary" bindtap="onAddFood">添加到今日</button>
+      <button class="btn-primary" bindtap="onAddFood">添加并继续</button>
     </view>
   </block>
 
@@ -101,7 +107,7 @@
         <text class="amount-unit">分钟</text>
         <text class="amount-kcal" wx:if="{{exKcal>0}}">≈ {{exKcal}} kcal</text>
       </view>
-      <button class="btn-primary" bindtap="onAddEx">添加到今日</button>
+      <button class="btn-primary" bindtap="onAddEx">添加并继续</button>
     </view>
   </block>
 </view>
