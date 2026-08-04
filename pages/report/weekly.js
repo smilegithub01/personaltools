@@ -1,5 +1,6 @@
 // pages/report/weekly.js —— 可分享周报卡片
 const growth = require('../../utils/growth.js')
+const cal = require('../../utils/calorie.js')
 
 Page({
   data: {
@@ -10,7 +11,47 @@ Page({
 
   onLoad() {
     const report = growth.buildWeeklyReport()
-    this.setData({ report })
+    // 本周平均营养素：遍历本周 7 天，用 calcDaySummary 取每天 carb/protein/fat 求平均
+    const profile = cal.getProfile() || {}
+    const dates = growth.getWeekRange()
+    let carbSum = 0, proteinSum = 0, fatSum = 0, nDays = 0
+    dates.forEach((date) => {
+      const sum = cal.calcDaySummary(date, profile)
+      if (sum.foodKcal > 0) {
+        carbSum += sum.carb
+        proteinSum += sum.protein
+        fatSum += sum.fat
+        nDays++
+      }
+    })
+    let nutrientCarb = 0, nutrientProtein = 0, nutrientFat = 0
+    let nutrientScore = 0, nutrientCarbPct = 0, nutrientProteinPct = 0, nutrientFatPct = 0
+    if (nDays > 0) {
+      nutrientCarb = Math.round((carbSum / nDays) * 10) / 10
+      nutrientProtein = Math.round((proteinSum / nDays) * 10) / 10
+      nutrientFat = Math.round((fatSum / nDays) * 10) / 10
+      const n = cal.calcNutrientScore(nutrientCarb, nutrientProtein, nutrientFat)
+      nutrientScore = n.score
+      nutrientCarbPct = n.carbPct
+      nutrientProteinPct = n.proteinPct
+      nutrientFatPct = n.fatPct
+    }
+    const carbArc = Math.round(439.8 * (nutrientCarbPct / 100))
+    const proteinArc = Math.round(439.8 * (nutrientProteinPct / 100))
+    const fatArc = Math.round(439.8 * (nutrientFatPct / 100))
+    this.setData({
+      report,
+      nutrientCarb,
+      nutrientProtein,
+      nutrientFat,
+      nutrientScore,
+      nutrientCarbPct,
+      nutrientProteinPct,
+      nutrientFatPct,
+      carbArc,
+      proteinArc,
+      fatArc
+    })
     // 等 canvas 节点渲染后标记 ready
     wx.nextTick(() => this.setData({ canvasReady: true }))
   },

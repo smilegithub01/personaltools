@@ -67,6 +67,8 @@ Page({
     const streak = ai.calcStreak()
     const bmi = cal.calcBMI(profile)
     const compliance = ai.weeklyCompliance()
+    // 三大营养素占比与均衡度评分
+    const nutrient = cal.calcNutrientScore(summary.carb, summary.protein, summary.fat)
     // banner 主标题从文案池随机抽一句；副标题保留连续打卡状态（精简）
     const bannerSub = streak > 0
       ? `连续打卡 ${streak} 天 · 记录好每一餐`
@@ -100,6 +102,18 @@ Page({
       ringColor: summary.remaining < 0 ? '#e53935' : '#ff7e8a',
       foods: day.foods,
       exercises: day.exercises,
+      // 营养素数据
+      nutrientCarb: summary.carb,
+      nutrientProtein: summary.protein,
+      nutrientFat: summary.fat,
+      nutrientScore: nutrient.score,
+      nutrientCarbPct: nutrient.carbPct,
+      nutrientProteinPct: nutrient.proteinPct,
+      nutrientFatPct: nutrient.fatPct,
+      // 环形图周长参数（半径70，周长≈439.8）
+      carbArc: Math.round(439.8 * (nutrient.carbPct / 100)),
+      proteinArc: Math.round(439.8 * (nutrient.proteinPct / 100)),
+      fatArc: Math.round(439.8 * (nutrient.fatPct / 100)),
       bannerTitle: pickBannerTitle(),
       bannerSub,
       bannerImg,
@@ -132,6 +146,9 @@ Page({
   },
   goReport() {
     wx.navigateTo({ url: '/pages/report/weekly' })
+  },
+  goMonthly() {
+    wx.navigateTo({ url: '/pages/report/monthly/monthly' })
   },
   goRank() {
     wx.navigateTo({ url: '/pages/rank/rank' })

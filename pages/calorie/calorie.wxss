@@ -347,3 +347,58 @@
   color: #4b5563;
   margin: 12rpx 0 8rpx;
 }
+
+/* ===== 三大营养素分析卡片 ===== */
+.nutrient-card {
+  background: #f8fafb;
+  border-radius: 16rpx;
+  padding: 20rpx 24rpx;
+  margin-bottom: 20rpx;
+}
+.nutrient-body {
+  display: flex;
+  align-items: center;
+}
+.nutrient-ring {
+  flex-shrink: 0;
+  margin-right: 24rpx;
+}
+.nutrient-list {
+  flex: 1;
+}
+.nutrient-row {
+  display: flex;
+  align-items: center;
+  padding: 8rpx 0;
+}
+.nutrient-dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  margin-right: 14rpx;
+  flex-shrink: 0;
+}
+.nutrient-name {
+  font-size: 26rpx;
+  color: #4b5563;
+  width: 100rpx;
+}
+.nutrient-val {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #1d1d1f;
+  flex: 1;
+  text-align: right;
+}
+.nutrient-pct {
+  font-size: 24rpx;
+  color: #9ca3af;
+  width: 70rpx;
+  text-align: right;
+}
+.nutrient-hint {
+  font-size: 20rpx;
+  color: #9ca3af;
+  margin-top: 12rpx;
+  text-align: center;
+}

@@ -1,4 +1,4 @@
-/* pages/report/weekly.wxss —— 可分享周报卡片 */
+/* pages/report/monthly.wxss —— 可分享月报卡片 */
 .report-page {
   min-height: 100vh;
   background: #f6f7f5;
@@ -16,6 +16,9 @@
   border-radius: 20rpx;
   box-shadow: 0 12rpx 32rpx rgba(0,0,0,.12);
 }
+.card-canvas-month {
+  height: 1040rpx; /* 2x 的 520px，容纳体重曲线 */
+}
 
 .report-summary {
   display: flex;
@@ -31,7 +34,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  box-shadow: 0 6rpx 18rpx rgba(0,0,0,.04);
+  box-shadow: 0 4rpx 16rpx rgba(24,53,45,0.06);
 }
 .rs-num {
   font-size: 42rpx;
@@ -44,36 +47,68 @@
   margin-top: 6rpx;
 }
 
-.report-actions {
-  display: flex;
-  gap: 18rpx;
-  margin-top: 28rpx;
-}
-.r-btn {
-  flex: 1;
-  border-radius: 999rpx;
-  font-size: 28rpx;
-  padding: 22rpx 0;
-  line-height: 1.4;
-}
-.r-btn.primary {
-  background: linear-gradient(90deg, #2f7d5b, #4ea15a);
-  color: #fff;
-  border: none;
-}
-.r-btn.ghost {
+/* 体重变化卡片 */
+.weight-card {
   background: #fff;
-  color: #2f7d5b;
-  border: 2rpx solid #bfe0cc;
+  border-radius: 24rpx;
+  padding: 28rpx 30rpx;
+  margin-top: 24rpx;
+  box-shadow: 0 4rpx 16rpx rgba(24,53,45,0.06);
 }
-.report-tip {
-  text-align: center;
+.wc-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #18352d;
+  margin-bottom: 22rpx;
+}
+.wc-row {
+  display: flex;
+  align-items: center;
+}
+.wc-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.wc-label {
   font-size: 22rpx;
   color: #9aa89f;
-  margin-top: 20rpx;
+  margin-bottom: 6rpx;
+}
+.wc-val {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #18352d;
+}
+.wc-arrow {
+  font-size: 36rpx;
+  color: #c5d6cc;
+  margin: 0 16rpx;
+}
+.wc-change {
+  margin-left: auto;
+  font-size: 26rpx;
+  font-weight: 700;
+  padding: 8rpx 18rpx;
+  border-radius: 999rpx;
+}
+/* 减重：正面绿 */
+.wc-change--1 {
+  color: #2fa86a;
+  background: rgba(47,168,106,.12);
+}
+/* 增重 */
+.wc-change-1 {
+  color: #ff7e8a;
+  background: rgba(255,126,138,.12);
+}
+/* 持平 */
+.wc-change-0 {
+  color: #8a988f;
+  background: rgba(138,152,143,.12);
 }
 
-/* ===== 营养素分析卡片 ===== */
+/* 营养素分析卡片 */
 .nutrient-card {
   background: #fff;
   border-radius: 24rpx;
@@ -133,4 +168,33 @@
   color: #9ca3af;
   margin-top: 18rpx;
   text-align: center;
+}
+
+.report-actions {
+  display: flex;
+  gap: 18rpx;
+  margin-top: 28rpx;
+}
+.r-btn {
+  flex: 1;
+  border-radius: 999rpx;
+  font-size: 28rpx;
+  padding: 22rpx 0;
+  line-height: 1.4;
+}
+.r-btn.primary {
+  background: linear-gradient(90deg, #2f7d5b, #4ea15a);
+  color: #fff;
+  border: none;
+}
+.r-btn.ghost {
+  background: #fff;
+  color: #2f7d5b;
+  border: 2rpx solid #bfe0cc;
+}
+.report-tip {
+  text-align: center;
+  font-size: 22rpx;
+  color: #9aa89f;
+  margin-top: 20rpx;
 }

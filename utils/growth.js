@@ -169,6 +169,109 @@ function buildWeeklyReport() {
   }
 }
 
+// ---------- 月报数据 ----------
+// 计算本月（当月 1 日到最后一天）的日期数组与首末日
+function getMonthRange() {
+  const now = new Date()
+  const year = now.getFullYear()
+  const month = now.getMonth()
+  const first = new Date(year, month, 1)
+  const last = new Date(year, month + 1, 0) // 当月最后一天
+  const dates = []
+  const d = new Date(first)
+  while (d <= last) {
+    dates.push(cal.dateKey(d))
+    d.setDate(d.getDate() + 1)
+  }
+  return { dates, first: cal.dateKey(first), last: cal.dateKey(last) }
+}
+
+function buildMonthlyReport() {
+  const profile = cal.getProfile() || {}
+  const { dates, first, last } = getMonthRange()
+  const logs = cal.getAllLogs()
+  const weightLog = cal.getWeightLog()
+  let checkinDays = 0
+  let totalFood = 0
+  let totalExercise = 0
+  // 营养素：按有食物记录的天数求平均
+  let carbSum = 0, proteinSum = 0, fatSum = 0, nutrientDays = 0
+  const weightPoints = []
+
+  dates.forEach((date) => {
+    const day = logs[date] || { foods: [], exercises: [] }
+    const foodK = (day.foods || []).reduce((s, f) => s + (Number(f.kcal) || 0), 0)
+    const exK = (day.exercises || []).reduce((s, e) => s + (Number(e.kcal) || 0), 0)
+    const checked = (day.foods && day.foods.length) || (day.exercises && day.exercises.length)
+    if (checked) checkinDays++
+    totalFood += foodK
+    totalExercise += exK
+    // 营养素：用 calcDaySummary 取每天 carb/protein/fat
+    if (day.foods && day.foods.length) {
+      const sum = cal.calcDaySummary(date, profile)
+      carbSum += sum.carb
+      proteinSum += sum.protein
+      fatSum += sum.fat
+      nutrientDays++
+    }
+    // 体重记录
+    if (weightLog[date] != null) {
+      weightPoints.push({ date, weight: Number(weightLog[date]) })
+    }
+  })
+
+  // 月初月末体重（取本月最早/最晚记录）
+  const monthKeys = Object.keys(weightLog)
+    .filter((k) => k >= first && k <= last)
+    .sort()
+  const startWeight = monthKeys.length ? Number(weightLog[monthKeys[0]]) : null
+  const endWeight = monthKeys.length ? Number(weightLog[monthKeys[monthKeys.length - 1]]) : null
+  const weightChange = (startWeight != null && endWeight != null)
+    ? Math.round((endWeight - startWeight) * 10) / 10
+    : null
+
+  // 平均营养素 & 均衡度评分
+  let carb = 0, protein = 0, fat = 0, score = 0
+  let carbPct = 0, proteinPct = 0, fatPct = 0
+  if (nutrientDays > 0) {
+    carb = Math.round((carbSum / nutrientDays) * 10) / 10
+    protein = Math.round((proteinSum / nutrientDays) * 10) / 10
+    fat = Math.round((fatSum / nutrientDays) * 10) / 10
+    const n = cal.calcNutrientScore(carb, protein, fat)
+    score = n.score
+    carbPct = n.carbPct
+    proteinPct = n.proteinPct
+    fatPct = n.fatPct
+  }
+
+  const streak = calcStreak()
+  const ov = cal.planOverview(profile)
+  const now = new Date()
+
+  return {
+    monthLabel: `${now.getFullYear()}年${now.getMonth() + 1}月`,
+    checkinDays,
+    totalFood: Math.round(totalFood),
+    totalExercise: Math.round(totalExercise),
+    streak,
+    startWeight: startWeight != null ? Math.round(startWeight * 10) / 10 : null,
+    endWeight: endWeight != null ? Math.round(endWeight * 10) / 10 : null,
+    weightChange,            // 负=减重，正=增重，null=无记录
+    carb,
+    protein,
+    fat,
+    carbPct,
+    proteinPct,
+    fatPct,
+    score,                   // 均衡度评分 0-100
+    weightPoints,
+    currentWeight: ov.currentWeight,
+    targetWeight: ov.targetWeight,
+    nickname: profile.nickName || '我',
+    goalText: ({ lose: '减脂', gain: '增肌', keep: '保持体重' })[profile.goalType] || '健康管理'
+  }
+}
+
 // ---------- 好友榜（零后端：微信开放数据 + 本地模拟） ----------
 // 说明：微信小游戏有开放数据域托管，但小程序无法直接读取好友数据。
 // 真实社交需后端，本方案用「本地模拟好友 + 开放数据展示自己头像昵称」实现零成本演示，
@@ -224,6 +327,8 @@ module.exports = {
   getTreeProgress,
   buildTreeData,
   buildWeeklyReport,
+  buildMonthlyReport,
+  getWeekRange,
   buildRank,
   safeGet,
   safeSet

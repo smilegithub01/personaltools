@@ -4,16 +4,25 @@ const ai = require('../../utils/ai.js')
 
 Page({
   data: {
+    // 多 tab：饮食/运动默认显示，饮水/围度/经期左滑出现（扩展功能）
     tab: 'food',
+    tabs: ['food', 'exercise', 'water', 'measure', 'period'],
+    tabLabels: { food: '记饮食', exercise: '记运动', water: '饮水', measure: '围度', period: '经期' },
+    showPeriod: false, // 仅女性显示经期 tab
+
+    // 饮食
     kw: '',
     foods: cal.FOOD_DB,
     frequent: [],
+    favorList: [], // 收藏的常吃食物
     selFood: null,
     grams: '',
     foodKcal: 0,
     meals: ['早餐', '午餐', '晚餐', '加餐'],
     meal: '午餐',
+    yesterdayFoods: [], // 昨日饮食（用于复制）
 
+    // 运动
     ekw: '',
     exercises: cal.EXERCISE_DB,
     selEx: null,
@@ -21,19 +30,53 @@ Page({
     exKcal: 0,
     weight: 60,
 
-    // 本次会话已添加项（支持一餐多种食物/运动连续录入，确认后才返回）
+    // 饮水
+    waterToday: 0,
+    waterGoal: 1500,
+
+    // 围度
+    measure: { waist: '', hip: '', thigh: '', arm: '' },
+
+    // 经期
+    period: { lastStart: '', cycleLen: 28, periodLen: 5, history: [] },
+    nextPeriod: '',
+    isPeriodToday: false,
+
+    // 本次会话已添加项（支持连续录入多项后再返回）
     addedCount: 0
   },
 
   onLoad(options) {
     const p = cal.getProfile()
+    const today = cal.dateKey()
+    // 性别判断：仅女性显示经期 tab
+    const showPeriod = p && p.gender === 'female'
+    const tabs = showPeriod
+      ? ['food', 'exercise', 'water', 'measure', 'period']
+      : ['food', 'exercise', 'water', 'measure']
     this.setData({
       weight: p ? p.weight : 60,
       meal: ai.predictMeal(),
-      frequent: ai.frequentFoods(6)
+      frequent: ai.frequentFoods(6),
+      favorList: cal.getFrequent(),
+      showPeriod,
+      tabs,
+      // 饮水
+      waterToday: cal.getWater(today),
+      // 围度
+      measure: this.loadMeasure(today),
+      // 经期
+      period: cal.getPeriod(),
+      nextPeriod: cal.predictNextPeriod(),
+      isPeriodToday: cal.isPeriodDay(today)
     })
-    if (options && options.tab === 'exercise') {
-      this.setData({ tab: 'exercise' })
+    // 昨日饮食（用于复制昨日）
+    const yesterday = this.yesterdayKey()
+    const yDay = cal.getDayLog(yesterday)
+    this.setData({ yesterdayFoods: yDay.foods || [] })
+
+    if (options && options.tab && tabs.indexOf(options.tab) >= 0) {
+      this.setData({ tab: options.tab })
     }
     // 首页饮食推荐跳转：带入搜索词并预填
     if (options && options.kw) {
@@ -43,6 +86,18 @@ Page({
     }
   },
 
+  yesterdayKey() {
+    const d = new Date()
+    d.setDate(d.getDate() - 1)
+    return cal.dateKey(d)
+  },
+
+  loadMeasure(date) {
+    const m = cal.getMeasure(date)
+    return m ? { waist: String(m.waist || ''), hip: String(m.hip || ''), thigh: String(m.thigh || ''), arm: String(m.arm || '') }
+      : { waist: '', hip: '', thigh: '', arm: '' }
+  },
+
   onTab(e) {
     this.setData({ tab: e.currentTarget.dataset.tab })
   },
@@ -50,7 +105,7 @@ Page({
   // ---- 饮食 ----
   onKw(e) {
     const kw = e.detail.value.trim()
-    const foods = ai.semanticSearch(kw, cal.FOOD_DB) // 语义搜索
+    const foods = ai.semanticSearch(kw, cal.FOOD_DB)
     this.setData({ kw, foods })
   },
   onPickFood(e) {
@@ -58,7 +113,6 @@ Page({
     const f = cal.FOOD_DB.find((x) => x.name === name)
     this.setData({ selFood: f, grams: '', foodKcal: 0 })
   },
-  // 自定义食物：打开录入面板，进入自定义编辑态
   onCustomFood() {
     this.setData({
       selFood: { name: '', kcal: '', cat: '自定义', custom: true },
@@ -88,6 +142,50 @@ Page({
     const kcal = f && kcalPer100 && g ? cal.calcFoodKcal(kcalPer100, g) : 0
     this.setData({ grams: g ? String(g) : '', foodKcal: kcal })
   },
+  // 收藏/取消收藏当前食物到常吃
+  onToggleFavor() {
+    const f = this.data.selFood
+    if (!f) return
+    const list = cal.getFrequent()
+    const exists = list.find((x) => x.name === f.name)
+    if (exists) {
+      cal.removeFrequent(f.name)
+      wx.showToast({ title: '已取消收藏', icon: 'none' })
+    } else {
+      cal.addFrequent({ name: f.name, kcal: f.kcal, carb: f.carb || 0, protein: f.protein || 0, fat: f.fat || 0, cat: f.cat })
+      wx.showToast({ title: '已加入常吃', icon: 'success' })
+    }
+    this.setData({ favorList: cal.getFrequent() })
+  },
+  // 点击收藏的常吃食物
+  onPickFavor(e) {
+    const name = e.currentTarget.dataset.name
+    const f = cal.getFrequent().find((x) => x.name === name) || cal.FOOD_DB.find((x) => x.name === name)
+    if (f) this.setData({ selFood: f, grams: '', foodKcal: 0 })
+  },
+  // 复制昨日某餐到今日
+  onCopyYesterday(e) {
+    const meal = e.currentTarget.dataset.meal || ''
+    const yFoods = this.data.yesterdayFoods
+    if (!yFoods || !yFoods.length) {
+      wx.showToast({ title: '昨天没有饮食记录', icon: 'none' })
+      return
+    }
+    const toCopy = meal ? yFoods.filter((f) => f.meal === meal) : yFoods
+    if (!toCopy.length) {
+      wx.showToast({ title: `昨天没有${meal}记录`, icon: 'none' })
+      return
+    }
+    const today = cal.dateKey()
+    const day = cal.getDayLog(today)
+    toCopy.forEach((f) => {
+      day.foods.push({ name: f.name, kcal: f.kcal, grams: f.grams, meal: f.meal, carb: f.carb || 0, protein: f.protein || 0, fat: f.fat || 0 })
+    })
+    if (!cal.saveDayLog(today, day)) return
+    const count = this.data.addedCount + toCopy.length
+    this.setData({ addedCount: count })
+    wx.showToast({ title: `已复制 ${toCopy.length} 项`, icon: 'success' })
+  },
   onAddFood() {
     const { selFood, grams, meal } = this.data
     const g = Number(grams)
@@ -97,7 +195,6 @@ Page({
     }
     let name = selFood.name
     let kcalPer100 = Number(selFood.kcal)
-    // 自定义食物：校验名称与热量
     if (selFood.custom) {
       name = (name || '').trim()
       if (!name) {
@@ -122,11 +219,14 @@ Page({
       wx.showToast({ title: '本次热量数值异常', icon: 'none' })
       return
     }
+    // 保存营养素（库内食物自带，自定义食物为0）
+    const carb = selFood.carb || 0
+    const protein = selFood.protein || 0
+    const fat = selFood.fat || 0
     const today = cal.dateKey()
     const day = cal.getDayLog(today)
-    day.foods.push({ name: String(name).slice(0, 30), kcal, grams: g, meal })
+    day.foods.push({ name: String(name).slice(0, 30), kcal, grams: g, meal, carb, protein, fat })
     if (!cal.saveDayLog(today, day)) return
-    // 添加成功后不返回，清空面板，支持继续录入下一项
     const count = this.data.addedCount + 1
     this.setData({
       addedCount: count,
@@ -140,11 +240,9 @@ Page({
   // ---- 运动 ----
   onEkw(e) {
     const ekw = e.detail.value.trim()
-    const exercises = ai.semanticSearch(ekw, cal.EXERCISE_DB) // 语义搜索
+    const exercises = ai.semanticSearch(ekw, cal.EXERCISE_DB)
     this.setData({ ekw, exercises })
   },
-
-  // 点击「常吃」快捷项，直接选中对应食物
   onFrequent(e) {
     const name = e.currentTarget.dataset.name
     const f = cal.FOOD_DB.find((x) => x.name === name)
@@ -155,7 +253,6 @@ Page({
     const ex = cal.EXERCISE_DB.find((x) => x.name === name)
     this.setData({ selEx: ex, minutes: '', exKcal: 0 })
   },
-  // 关闭底部录入面板
   onClosePanel() {
     if (this.data.tab === 'food') {
       this.setData({ selFood: null, grams: '', foodKcal: 0 })
@@ -193,7 +290,6 @@ Page({
     const day = cal.getDayLog(today)
     day.exercises.push({ name: selEx.name.slice(0, 30), kcal, duration: m })
     if (!cal.saveDayLog(today, day)) return
-    // 添加成功后不返回，清空面板，支持继续录入下一项
     const count = this.data.addedCount + 1
     this.setData({
       addedCount: count,
@@ -202,6 +298,75 @@ Page({
       exKcal: 0
     })
     wx.showToast({ title: `已添加 ${kcal} kcal (${count})`, icon: 'success' })
+  },
+
+  // ---- 饮水 ----
+  onAddWater(e) {
+    const delta = Number(e.currentTarget.dataset.ml) || 0
+    const today = cal.dateKey()
+    cal.addWater(today, delta)
+    const waterToday = cal.getWater(today)
+    this.setData({ waterToday })
+    wx.showToast({ title: `+${delta}ml`, icon: 'none' })
+  },
+  onSubWater() {
+    const today = cal.dateKey()
+    const cur = cal.getWater(today)
+    const next = Math.max(0, cur - 200)
+    cal.saveWater(today, next)
+    this.setData({ waterToday: next })
+  },
+  onClearWater() {
+    const today = cal.dateKey()
+    cal.saveWater(today, 0)
+    this.setData({ waterToday: 0 })
+  },
+
+  // ---- 围度 ----
+  onMeasureInput(e) {
+    const field = e.currentTarget.dataset.field
+    this.setData({ ['measure.' + field]: e.detail.value })
+  },
+  onSaveMeasure() {
+    const m = this.data.measure
+    const today = cal.dateKey()
+    cal.saveMeasure(today, {
+      waist: Number(m.waist) || 0,
+      hip: Number(m.hip) || 0,
+      thigh: Number(m.thigh) || 0,
+      arm: Number(m.arm) || 0
+    })
+    const count = this.data.addedCount + 1
+    this.setData({ addedCount: count })
+    wx.showToast({ title: '围度已记录', icon: 'success' })
+  },
+
+  // ---- 经期 ----
+  onPeriodStart() {
+    const today = cal.dateKey()
+    const p = cal.logPeriodStart(today)
+    this.setData({
+      period: p,
+      nextPeriod: cal.predictNextPeriod(),
+      isPeriodToday: true
+    })
+    const count = this.data.addedCount + 1
+    this.setData({ addedCount: count })
+    wx.showToast({ title: '已记录经期开始', icon: 'success' })
+  },
+  onCycleInput(e) {
+    const v = Number(e.detail.value) || 28
+    const p = cal.getPeriod()
+    p.cycleLen = Math.max(15, Math.min(60, v))
+    cal.savePeriod(p)
+    this.setData({ period: p, nextPeriod: cal.predictNextPeriod() })
+  },
+  onPeriodLenInput(e) {
+    const v = Number(e.detail.value) || 5
+    const p = cal.getPeriod()
+    p.periodLen = Math.max(1, Math.min(15, v))
+    cal.savePeriod(p)
+    this.setData({ period: p, isPeriodToday: cal.isPeriodDay(cal.dateKey()) })
   },
 
   // 完成录入：返回上一页

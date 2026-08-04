@@ -7,6 +7,7 @@
     "pages/coach/coach",
     "pages/growth/tree",
     "pages/report/weekly",
+    "pages/report/monthly/monthly",
     "pages/rank/rank"
   ],
   "window": {
